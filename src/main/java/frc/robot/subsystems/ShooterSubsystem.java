@@ -24,7 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void shooterFlip(){
         // Turn shooter on/off
         double sr = (ShooterRight.get() != 0) ? 0 : 1;
-        double sl = (ShooterLeft.get() != 0) ? 0 : 1;;
+        double sl = (ShooterLeft.get() != 0) ? 0 : 1;
         ShooterRight.set(sr);
         ShooterLeft.set(sl);
     }
@@ -32,7 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void intakeFlip(){
         // Turn intake on/off
         double i1 = (intake1.get() != 0) ? 0 : 1;
-        double i2 = (intake2.get() != 0) ? 0 : 1;;
+        double i2 = (intake2.get() != 0) ? 0 : 1;
         intake1.set(i1);
         intake2.set(i2);
     }

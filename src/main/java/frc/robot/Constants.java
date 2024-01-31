@@ -27,8 +27,8 @@ public final class Constants {
 
   public static final class ShooterConstants {
 
-    public static final int kShooterLeftId = 12;
-    public static final int kShooterRightId = 13;
+    public static final int kShooterLeftId = 14;
+    public static final int kShooterRightId = 15;
     public static final int kintake1Id = 12;
     public static final int kintake2Id = 13;
 
@@ -61,14 +61,14 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
     // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 4;
+    public static final int kFrontLeftDrivingCanId = 3;
     public static final int kRearLeftDrivingCanId = 2;
-    public static final int kFrontRightDrivingCanId = 6;
-    public static final int kRearRightDrivingCanId = 8;
+    public static final int kFrontRightDrivingCanId = 4;
+    public static final int kRearRightDrivingCanId = 5;
 
-    public static final int kFrontLeftTurningCanId = 5;
-    public static final int kRearLeftTurningCanId = 3;
-    public static final int kFrontRightTurningCanId = 7;
+    public static final int kFrontLeftTurningCanId = 7;
+    public static final int kRearLeftTurningCanId = 6;
+    public static final int kFrontRightTurningCanId = 8;
     public static final int kRearRightTurningCanId = 9;
 
     public static final boolean kGyroReversed = false;
@@ -122,12 +122,12 @@ public final class Constants {
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
     public static final int kDrivingMotorCurrentLimit = 80; // amps
-    public static final int kTurningMotorCurrentLimit = 50; // amps
+    public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.1;
+    public static final double kDriveDeadband = 0.15;
   }
 
   public static final class AutoConstants {
