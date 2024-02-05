@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class RobotContainer {
 
+    
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ShooterSubsystem shootersubsystem = new ShooterSubsystem();
@@ -45,6 +46,11 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    // NamedCommands.registerCommand("autoBalance", shootersubsystem.shooterON());
+    // NamedCommands.registerCommand("exampleCommand", shootersubsystem.shooterOFF());
+    
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -61,6 +67,7 @@ public class RobotContainer {
             m_robotDrive));
   }
 
+  
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by
