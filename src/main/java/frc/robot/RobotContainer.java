@@ -29,7 +29,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -61,6 +63,12 @@ autoChooser = AutoBuilder.buildAutoChooser();
     // NamedCommands.registerCommand("autoBalance", shootersubsystem.shooterON());
     // NamedCommands.registerCommand("exampleCommand", shootersubsystem.shooterOFF());
     
+
+
+        // Register Named Commands
+        NamedCommands.registerCommand("autoBalance", shootersubsystem.intakeON());
+        NamedCommands.registerCommand("exampleCommand", shootersubsystem.intakeOFF());
+     
 
     // Configure the button bindings
     configureButtonBindings();
@@ -152,6 +160,7 @@ autoChooser = AutoBuilder.buildAutoChooser();
 //   }
 
    public Command getAutonomousCommand() {
+     PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     return new PathPlannerAuto("Example Auto");
   }
 

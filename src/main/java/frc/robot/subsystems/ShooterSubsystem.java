@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -37,19 +38,22 @@ public class ShooterSubsystem extends SubsystemBase {
         intake2.set(i2);
     }
 
-    public void shooterON(){
+    public Command shooterON(){
         // ArmLeft.setNeutralMode(NeutralMode.Brake);
         ShooterRight.set(50);
         ShooterLeft.set(50);
+        return null;
     }
-    public void intakeON(){
+    public Command intakeON(){
         intake1.set(50);
         intake2.set(-50);
+        return null;
     }
   
-    public void intakeOFF(){
+    public Command intakeOFF(){
         intake1.set(0);
         intake2.set(0);
+        return null;
     }
 
     public void shooterOFF() {
