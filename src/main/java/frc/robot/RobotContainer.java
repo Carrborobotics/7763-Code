@@ -64,8 +64,8 @@ public class RobotContainer {
         // NamedCommands.registerCommand("exampleCommand", shootersubsystem.shooterOFF());
 
         // Register Named Commands
-        NamedCommands.registerCommand("autoBalance", shootersubsystem.intakeON());
-        NamedCommands.registerCommand("exampleCommand", shootersubsystem.intakeOFF());
+        NamedCommands.registerCommand("IntakeON", shootersubsystem.intakeON());
+        NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
 
         // Configure the button bindings
         configureButtonBindings();
@@ -100,7 +100,13 @@ public class RobotContainer {
         // Right Bumper: Turn intake on/off
         new JoystickButton(m_driverController, Button.kRightBumper.value)
             .onTrue(new RunCommand(()-> shootersubsystem.intakeFlip()));
+    
+        SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
+        PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
+        AutoBuilder.followPath(path).schedule();
+        //return new PathPlannerAuto("2 Piece Auto");
     }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -110,7 +116,6 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
-        return new PathPlannerAuto("New Path");
+        return autoChooser.getSelected();
     }
 }
