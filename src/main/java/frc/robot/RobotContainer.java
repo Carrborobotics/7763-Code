@@ -110,7 +110,7 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
-        return new PathPlannerAuto("Example Auto");
+        PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
+        return new PathPlannerAuto("New Path");
     }
 }
