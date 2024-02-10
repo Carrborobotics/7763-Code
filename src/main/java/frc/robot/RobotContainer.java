@@ -102,7 +102,7 @@ public class RobotContainer {
     
         SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
         SmartDashboard.putData("Shooter Test", new PathPlannerAuto("shooter test"));
-        SmartDashboard.putData("Square Dance", new PathPlannerAuto("New Auto"));
+        SmartDashboard.putData("Square Dance", new PathPlannerAuto("Square Auto"));
 
         // test that basic paths show up in the dash too
         PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
