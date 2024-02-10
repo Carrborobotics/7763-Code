@@ -8,56 +8,56 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.755565668538745,
-        "y": 7.02974451782237
+        "x": 4.99838380427087,
+        "y": 7.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.810377449458603,
-        "y": 6.845237255289326
+        "x": 5.0,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 5.825881297178253,
-        "y": 7.134822528923683
+        "x": 5.0,
+        "y": 7.022680385280822
       },
       "nextControl": {
-        "x": 5.779948100406168,
-        "y": 6.27686922619059
+        "x": 5.0,
+        "y": 6.961066157821596
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.2262727071750446,
-        "y": 3.9587407924815854
+        "x": 5.0,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 6.19729320245839,
-        "y": 4.038383537674024
+        "x": 5.028138049823404,
+        "y": 4.0
       },
       "nextControl": {
-        "x": 3.9506466576597647,
-        "y": 3.8541144113538235
+        "x": 4.982138219170854,
+        "y": 4.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.241673251865022,
-        "y": 3.9587407924815854
+        "x": 2.0,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 3.136540413127123,
-        "y": 3.9792173785736473
+        "x": 2.0,
+        "y": 4.019121608578555
       },
       "nextControl": {
-        "x": 1.5499894039385347,
-        "y": 3.942913500483765
+        "x": 2.0,
+        "y": 3.973158408327944
       },
       "isLocked": false,
       "linkedName": null
@@ -68,8 +68,8 @@
         "y": 7.0
       },
       "prevControl": {
-        "x": 1.9905525922155864,
-        "y": 5.3388316064842245
+        "x": 1.989122270059487,
+        "y": 7.021236913173707
       },
       "nextControl": null,
       "isLocked": false,
@@ -80,8 +80,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
