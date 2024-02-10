@@ -60,12 +60,11 @@ public class RobotContainer {
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        // NamedCommands.registerCommand("autoBalance", shootersubsystem.shooterON());
-        // NamedCommands.registerCommand("exampleCommand", shootersubsystem.shooterOFF());
-
         // Register Named Commands
         NamedCommands.registerCommand("IntakeON", shootersubsystem.intakeON());
         NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
+        NamedCommands.registerCommand("shooterON", shootersubsystem.shooterON());
+        NamedCommands.registerCommand("shooterOFF", shootersubsystem.shooterOFF());
 
         // Configure the button bindings
         configureButtonBindings();
@@ -103,10 +102,13 @@ public class RobotContainer {
     
         SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
         SmartDashboard.putData("Shooter Test", new PathPlannerAuto("shooter test"));
+        SmartDashboard.putData("Square Dance", new PathPlannerAuto("Square Path"));
 
+        // test that basic paths show up in the dash too
         PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
         AutoBuilder.followPath(path).schedule();
-        //return new PathPlannerAuto("2 Piece Auto");
+
+        return;
     }
 
 

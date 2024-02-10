@@ -22,31 +22,32 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    public void shooterFlip(){
+    public Command shooterFlip(){
         // Turn shooter on/off
         double sr = (ShooterRight.get() != 0) ? 0 : 1;
         double sl = (ShooterLeft.get() != 0) ? 0 : 1;
         ShooterRight.set(sr);
         ShooterLeft.set(sl);
+        return null;
     }
 
-    public void intakeFlip(){
+    public Command intakeFlip(){
         // Turn intake on/off
         double i1 = (intake1.get() != 0) ? 0 : 1;
         double i2 = (intake2.get() != 0) ? 0 : 1;
         intake1.set(i1);
         intake2.set(i2);
+        return null;
     }
 
     public Command shooterON(){
-        // ArmLeft.setNeutralMode(NeutralMode.Brake);
-        ShooterRight.set(50);
-        ShooterLeft.set(50);
+        ShooterRight.set(0.5);
+        ShooterLeft.set(0.5);
         return null;
     }
     public Command intakeON(){
-        intake1.set(50);
-        intake2.set(-50);
+        intake1.set(0.5);
+        intake2.set(-0.5);
         return null;
     }
   
@@ -56,10 +57,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return null;
     }
 
-    public void shooterOFF() {
-        // ArmLeft.setNeutralMode(NeutralMode.Brake);
+    public Command shooterOFF() {
         ShooterRight.set(0);
         ShooterLeft.set(0);
+        return null;
       }
 
   @Override
