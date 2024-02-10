@@ -102,6 +102,8 @@ public class RobotContainer {
             .onTrue(new RunCommand(()-> shootersubsystem.intakeFlip()));
     
         SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
+        SmartDashboard.putData("Shooter Test", new PathPlannerAuto("shooter test"));
+
         PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
         AutoBuilder.followPath(path).schedule();
         //return new PathPlannerAuto("2 Piece Auto");
