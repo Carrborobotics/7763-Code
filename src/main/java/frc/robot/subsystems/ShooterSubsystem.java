@@ -58,6 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command shooterOFF() {
+        // ArmLeft.setNeutralMode(NeutralMode.Brake);
         ShooterRight.set(0);
         ShooterLeft.set(0);
         return null;
