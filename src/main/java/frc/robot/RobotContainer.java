@@ -52,6 +52,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
         NamedCommands.registerCommand("shooterON", shootersubsystem.shooterON());
         NamedCommands.registerCommand("shooterOFF", shootersubsystem.shooterOFF());
+        NamedCommands.registerCommand("LedOn", m_vision.ledOn());
+        NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
+        NamedCommands.registerCommand("takeSnap", m_vision.takeSnap());
 
         configureButtonBindings();
         configureAuto();
@@ -70,11 +73,12 @@ public class RobotContainer {
 
     private void configureAuto() {
 
+
     }
     
     private void configureButtonBindings() {
         //A button: puts the wheels to X
-        new JoystickButton(m_driverController, Button.kA.value)
+        new JoystickButton(m_driverController, Button.kStart.value)
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.setX(),
                 m_robotDrive));
@@ -92,6 +96,15 @@ public class RobotContainer {
     
         new JoystickButton(m_driverController, Button.kX.value)
             .onTrue(new RunCommand(()-> shootersubsystem.intakeON(), shootersubsystem));
+        
+        new JoystickButton(m_driverController, Button.kA.value)
+            .onTrue(new RunCommand(()-> m_vision.ledOn(), m_vision));
+        
+        new JoystickButton(m_driverController, Button.kB.value)
+            .onTrue(new RunCommand(()-> m_vision.ledOff(), m_vision));
+
+        new JoystickButton(m_driverController, Button.kBack.value)
+            .onTrue(new RunCommand(()-> m_vision.takeSnap(), m_vision));
 
         SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
         SmartDashboard.putData("Shooter Test", new PathPlannerAuto("shooter test"));

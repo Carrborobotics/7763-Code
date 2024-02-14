@@ -1,9 +1,11 @@
 package frc.robot.subsystems;
 
+import java.security.Key;
 import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase{
@@ -51,6 +53,24 @@ public class Limelight extends SubsystemBase{
         m_lime.getEntry("ledmode").setNumber(status);
     }
 
+        //LED on
+    public Command ledOn() {
+        m_lime.getEntry("ledmode").setNumber(3.0);
+        return null;
+    }
+
+    //LED off
+    public Command ledOff() {
+        m_lime.getEntry("ledMode").setNumber(1.0);
+        return null;
+    }
+
+
+    //take snapshot
+    public Command takeSnap() {
+        m_lime.getEntry("snapshot").setNumber(1.0);
+        return null;
+    }
 
 
     
