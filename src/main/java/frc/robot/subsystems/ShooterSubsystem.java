@@ -48,8 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
         return null;
     }
     public Command intakeON(){
-        intake1.set(0.5);
-        intake2.set(0.5);
+        intake1.set(0.2);
+        intake2.set(0.2);
         return null;
     }
   
@@ -58,7 +58,11 @@ public class ShooterSubsystem extends SubsystemBase {
         intake2.set(0);
         return null;
     }
-
+public Command intakeREV(){
+        intake1.set(-.2);
+        intake2.set(-0.2);
+        return null;
+    }
     public Command shooterOFF() {
         // ArmLeft.setNeutralMode(NeutralMode.Brake);
         ShooterRight.set(0);

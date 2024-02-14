@@ -99,7 +99,7 @@ public class RobotContainer {
 
         // Right Bumper: Turn intake on/off
         new JoystickButton(m_driverController, Button.kRightBumper.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.intakeFlip(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeREV(), shootersubsystem));
 
         new JoystickButton(m_driverController, Button.kY.value)
             .onTrue(new RunCommand(()-> shootersubsystem.intakeOFF(), shootersubsystem));
