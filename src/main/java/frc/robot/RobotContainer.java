@@ -95,12 +95,18 @@ public class RobotContainer {
 
         // Left Bumper: Turn shooter on/off
         new JoystickButton(m_driverController, Button.kLeftBumper.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.shooterFlip()));
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterFlip(), shootersubsystem));
 
         // Right Bumper: Turn intake on/off
         new JoystickButton(m_driverController, Button.kRightBumper.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.intakeFlip()));
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeFlip(), shootersubsystem));
+
+        new JoystickButton(m_driverController, Button.kY.value)
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeOFF(), shootersubsystem));
     
+        new JoystickButton(m_driverController, Button.kX.value)
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeON(), shootersubsystem));
+
         SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
         SmartDashboard.putData("Shooter Test", new PathPlannerAuto("shooter test"));
 

@@ -35,6 +35,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // Turn intake on/off
         double i1 = (intake1.get() != 0) ? 0 : 1;
         double i2 = (intake2.get() != 0) ? 0 : 1;
+        System.out.println("I1 " + i1 + "I2 " + i2);
         intake1.set(i1);
         intake2.set(i2);
         return null;
@@ -42,13 +43,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command shooterON(){
         // ArmLeft.setNeutralMode(NeutralMode.Brake);
-        ShooterRight.set(50);
-        ShooterLeft.set(50);
+        ShooterRight.set(0.5);
+        ShooterLeft.set(0.5);
         return null;
     }
     public Command intakeON(){
-        intake1.set(50);
-        intake2.set(-50);
+        intake1.set(0.5);
+        intake2.set(0.5);
         return null;
     }
   
