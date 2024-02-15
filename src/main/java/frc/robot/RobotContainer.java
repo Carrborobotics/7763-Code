@@ -35,7 +35,7 @@ public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ShooterSubsystem shootersubsystem = new ShooterSubsystem();
-    private final SendableChooser<Command> autoChooser;
+    //private final SendableChooser<Command> autoChooser;
     private final Limelight m_vision = new Limelight("limelight");
 
     // Define the controller being used
@@ -44,8 +44,6 @@ public class RobotContainer {
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
         
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         // Register Named Commands
         NamedCommands.registerCommand("IntakeON", shootersubsystem.intakeON());
@@ -55,10 +53,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("LedOn", m_vision.ledOn());
         NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
         NamedCommands.registerCommand("takeSnap", m_vision.takeSnap());
+        //autoChooser = AutoBuilder.buildAutoChooser();
+        //SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureButtonBindings();
         configureAuto();
-        m_vision.getName();
+        m_vision.setPipeline(0);
 
         // Configure default commands
         m_robotDrive.setDefaultCommand(
@@ -106,9 +106,6 @@ public class RobotContainer {
         new JoystickButton(m_driverController, Button.kBack.value)
             .onTrue(new RunCommand(()-> m_vision.takeSnap(), m_vision));
 
-        SmartDashboard.putData("Two Piece Auto Test", new PathPlannerAuto("2 Piece Auto"));
-        SmartDashboard.putData("Shooter Test", new PathPlannerAuto("shooter test"));
-        SmartDashboard.putData("Square Dance", new PathPlannerAuto("Square Auto"));
 
         return;
     }
@@ -122,6 +119,7 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        return null;
+        //autoChooser.getSelected();
     }
 }
