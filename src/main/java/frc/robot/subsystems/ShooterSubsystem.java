@@ -23,7 +23,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command shooterFlip(){
-    public Command shooterFlip(){
         // Turn shooter on/off
         if(ShooterLeft.get() > 0.1 | ShooterLeft.get() < 0.1) {
             ShooterLeft.set(0);
@@ -38,10 +37,8 @@ public class ShooterSubsystem extends SubsystemBase {
         //    ShooterRight.set(0.5);
         //}
         return null;
-        return null;
     }
 
-    public Command intakeFlip(){
     public Command intakeFlip(){
         // Turn intake on/off
         double i1 = (intake1.get() != 0) ? 0 : 1;
@@ -77,7 +74,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command shooterOFF() {
         //ShooterRight.set(0);
         ShooterLeft.set(0);
-        return null;
         return null;
       }
 
