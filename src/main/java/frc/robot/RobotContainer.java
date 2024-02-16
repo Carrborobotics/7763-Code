@@ -4,24 +4,21 @@
 
 package frc.robot; 
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
-
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
+import frc.robot.subsystems.ShooterSubsystem;
 
 
 /*
@@ -29,8 +26,10 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
- */
+ */  
+
 public class RobotContainer {
+  private final SendableChooser<Command> autoChooser;
 
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
@@ -43,7 +42,7 @@ public class RobotContainer {
 
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
-        
+
 
         // Register Named Commands
         NamedCommands.registerCommand("IntakeON", shootersubsystem.intakeON());
@@ -56,8 +55,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("LedOn", m_vision.ledOn());
         NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
         NamedCommands.registerCommand("takeSnap", m_vision.takeSnap());
-        //autoChooser = AutoBuilder.buildAutoChooser();
-        //SmartDashboard.putData("Auto Chooser", autoChooser);
+        
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureButtonBindings();
         configureAuto();
@@ -123,7 +123,8 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return null;
-        //autoChooser.getSelected();
+        return autoChooser.getSelected();
+
+    
     }
 }
