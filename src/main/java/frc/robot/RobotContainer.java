@@ -47,9 +47,12 @@ public class RobotContainer {
 
         // Register Named Commands
         NamedCommands.registerCommand("IntakeON", shootersubsystem.intakeON());
+
         NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
+
         NamedCommands.registerCommand("shooterON", shootersubsystem.shooterON());
         NamedCommands.registerCommand("shooterOFF", shootersubsystem.shooterOFF());
+
         NamedCommands.registerCommand("LedOn", m_vision.ledOn());
         NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
         NamedCommands.registerCommand("takeSnap", m_vision.takeSnap());
@@ -83,19 +86,19 @@ public class RobotContainer {
                 () -> m_robotDrive.setX(),
                 m_robotDrive));
 
-        // Left Bumper: Turn shooter on/off
-        new JoystickButton(m_driverController, Button.kLeftBumper.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.shooterFlip(), shootersubsystem));
+        // // Left Bumper: Turn shooter on/off
+        // new JoystickButton(m_driverController, Button.kLeftBumper.value)
+        //     .onTrue(new RunCommand(()-> shootersubsystem.shooterFlip(), shootersubsystem));
 
         // Right Bumper: Turn intake on/off
         new JoystickButton(m_driverController, Button.kRightBumper.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.intakeREV(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeON(), shootersubsystem));
 
         new JoystickButton(m_driverController, Button.kY.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.intakeOFF(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeREV(), shootersubsystem));
     
         new JoystickButton(m_driverController, Button.kX.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.intakeON(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.intakeOFF(), shootersubsystem));
         
         new JoystickButton(m_driverController, Button.kA.value)
             .onTrue(new RunCommand(()-> m_vision.ledOn(), m_vision));

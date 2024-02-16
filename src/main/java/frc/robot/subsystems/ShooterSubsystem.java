@@ -16,6 +16,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //CANSparkMax ShooterRight = new CANSparkMax(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
     CANSparkMax ShooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
     CANSparkMax intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
+    CANSparkMax intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
     //CANSparkMax intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
     
     public ShooterSubsystem() {
@@ -26,9 +27,11 @@ public class ShooterSubsystem extends SubsystemBase {
         // Turn shooter on/off
         if(ShooterLeft.get() > 0.1 | ShooterLeft.get() < 0.1) {
             ShooterLeft.set(0);
+            // ShooterRight.set(0);
         }
         else {
             ShooterLeft.set(0.5);
+            // ShooterRight.set(0.5);
         }
         //if(ShooterRight.get() > 0.1 | ShooterRight.get() < 0.1) {
         //    ShooterRight.set(0);
@@ -39,36 +42,39 @@ public class ShooterSubsystem extends SubsystemBase {
         return null;
     }
 
-    public Command intakeFlip(){
-        // Turn intake on/off
-        double i1 = (intake1.get() != 0) ? 0 : 1;
-        //double i2 = (intake2.get() != 0) ? 0 : 1;
-        //System.out.println("I1 " + i1 + "I2 " + i2);
-        intake1.set(i1);
-        //intake2.set(i2);
-        return null;
-    }
+    // public Command intakeFlip(){
+    //     // Turn intake on/off
+    //     double i1 = (intake1.get() != 0) ? 0 : 1;
+    //     //double i2 = (intake2.get() != 0) ? 0 : 1;
+    //     //System.out.println("I1 " + i1 + "I2 " + i2);
+    //     intake1.set(i1);
+    //     //intake2.set(i2);
+    //     return null;
+    // }
 
     public Command shooterON(){
         //ShooterRight.set(0.5);
-        ShooterLeft.set(0.5);
+        ShooterLeft.set(0.2);
         return null;
     }
     public Command intakeON(){
-        intake1.set(0.2);
+        intake1.set(0.1);
+        intake2.set(-0.5);
         //intake2.set(0.2);
         return null;
     }
   
     public Command intakeOFF(){
         intake1.set(0);
+        intake2.set(0);
+    
         //intake2.set(0);
         return null;
     }
     
     public Command intakeREV(){
-        intake1.set(-.2);
-        //intake2.set(-0.2);
+        intake1.set(-0.1);
+        intake2.set(0.5);
         return null;
     }
     public Command shooterOFF() {
