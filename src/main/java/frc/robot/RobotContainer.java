@@ -112,6 +112,9 @@ public class RobotContainer {
         new JoystickButton(m_driverController, Button.kRightStick.value)
             .onTrue(new RunCommand(()-> shootersubsystem.shooterON(), shootersubsystem));
 
+        new JoystickButton(m_driverController, Button.kLeftStick.value)
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterOFF(), shootersubsystem));
+
 
         
         return;
