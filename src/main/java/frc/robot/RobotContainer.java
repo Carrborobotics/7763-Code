@@ -109,6 +109,9 @@ public class RobotContainer {
         new JoystickButton(m_driverController, Button.kBack.value)
             .onTrue(new RunCommand(()-> m_vision.takeSnap(), m_vision));
 
+        new JoystickButton(m_driverController, Button.kRightStick.value)
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterON(), shootersubsystem));
+
 
         
         return;
