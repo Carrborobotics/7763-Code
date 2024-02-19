@@ -49,8 +49,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
 
-        NamedCommands.registerCommand("shooterON", shootersubsystem.shooterON());
-        NamedCommands.registerCommand("shooterOFF", shootersubsystem.shooterOFF());
+        NamedCommands.registerCommand("ShooterON", shootersubsystem.shooterON());
+        NamedCommands.registerCommand("ShooterOFF", shootersubsystem.shooterOFF());
 
         NamedCommands.registerCommand("LedOn", m_vision.ledOn());
         NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
