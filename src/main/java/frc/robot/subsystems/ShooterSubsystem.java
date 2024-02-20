@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogTrigger;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,9 +21,12 @@ public class ShooterSubsystem extends SubsystemBase {
     CANSparkMax intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
     CANSparkMax intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
     //CANSparkMax intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
+    AnalogTrigger noteSensor = new AnalogTrigger(Constants.ShooterConstants.kNoteSensorId);
+
+    //DigitalInput noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
     
     public ShooterSubsystem() {
-
+        noteSensor.setLimitsVoltage(1.5, 4);
     }
 
     public Command shooterFlip(){
@@ -42,33 +48,27 @@ public class ShooterSubsystem extends SubsystemBase {
         return null;
     }
 
-    // public Command intakeFlip(){
-    //     // Turn intake on/off
-    //     double i1 = (intake1.get() != 0) ? 0 : 1;
-    //     //double i2 = (intake2.get() != 0) ? 0 : 1;
-    //     //System.out.println("I1 " + i1 + "I2 " + i2);
-    //     intake1.set(i1);
-    //     //intake2.set(i2);
-    //     return null;
-    // }
-
     public Command shooterON(){
         //ShooterRight.set(0.5);
         ShooterLeft.set(0.2);
         return null;
     }
+
+    public Command shooterOFF() {
+        //ShooterRight.set(0);
+        ShooterLeft.set(0);
+        return null;
+    }
+
     public Command intakeON(){
-        intake1.set(0.5);
+        intake1.set(1);
         intake2.set(-1);
-        //intake2.set(0.2);
         return null;
     }
   
     public Command intakeOFF(){
         intake1.set(0);
         intake2.set(0);
-    
-        //intake2.set(0);
         return null;
     }
     
@@ -77,18 +77,18 @@ public class ShooterSubsystem extends SubsystemBase {
         intake2.set(0.5);
         return null;
     }
-    public Command shooterOFF() {
-        //ShooterRight.set(0);
-        ShooterLeft.set(0);
-        return null;
-      }
 
-  @Override
-  public void periodic() {
-    
-    // This method will be called once per scheduler run
-  }
 
- 
+    @Override
+    public void periodic() {
+        // Handle checking the note sensor to see if the intake is loaded
+        // noteSensor.get() is True if there is not a note
 
+        if(!noteSensor.getTriggerState()){
+            intakeOFF();
+        }
+        else{
+            intakeON();
+        }
+    }
 }
