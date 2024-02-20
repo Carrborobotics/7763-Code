@@ -58,8 +58,8 @@ public class ShooterSubsystem extends SubsystemBase {
         return null;
     }
     public Command intakeON(){
-        intake1.set(0.1);
-        intake2.set(-0.5);
+        intake1.set(0.5);
+        intake2.set(-1);
         //intake2.set(0.2);
         return null;
     }
