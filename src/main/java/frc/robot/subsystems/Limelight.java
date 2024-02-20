@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.security.Key;
 import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -13,7 +12,7 @@ public class Limelight extends SubsystemBase{
     // Setup basics objects for the limelight
     private final NetworkTable m_lime;
     private final String m_name;
-    private final ArrayList<double[]> m_poses = new ArrayList();
+    private final ArrayList<double[]> m_poses = new ArrayList<double[]>();
 
     public Limelight(String name) {
         m_lime = NetworkTableInstance.getDefault().getTable(name);
