@@ -283,6 +283,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
+    m_gyro.setAngleAdjustment(90);
     m_gyro.reset();
   }
 

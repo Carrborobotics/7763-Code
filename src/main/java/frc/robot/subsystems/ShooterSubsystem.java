@@ -81,12 +81,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         // Handle checking the note sensor to see if the intake is loaded
         // noteSensor.get() is True if there is not a note
-
-        if(!noteSensor.getTriggerState()){
-            intakeOFF();
-        }
-        else{
-            intakeON();
-        }
-    }
+//         System.out.println(noteSensor.getTriggerState());
+//         if(!noteSensor.getTriggerState()){
+//             intakeOFF();
+//         }
+//         else{
+//             intakeON();
+//         }
+   }
 }

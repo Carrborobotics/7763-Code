@@ -49,8 +49,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
 
-        NamedCommands.registerCommand("ShooterON", shootersubsystem.shooterON());
-        NamedCommands.registerCommand("ShooterOFF", shootersubsystem.shooterOFF());
+//        NamedCommands.registerCommand("ShooterON", shootersubsystem.shooterON());
+//        NamedCommands.registerCommand("ShooterOFF", shootersubsystem.shooterOFF());
 
         NamedCommands.registerCommand("LedOn", m_vision.ledOn());
         NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
@@ -83,7 +83,7 @@ public class RobotContainer {
         //A button: puts the wheels to X
         new JoystickButton(m_driverController, Button.kStart.value)
             .whileTrue(new RunCommand(
-                () -> m_robotDrive.setX(),
+                () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
 
         // // Left Bumper: Turn shooter on/off
