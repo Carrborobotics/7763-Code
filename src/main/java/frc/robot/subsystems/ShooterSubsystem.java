@@ -55,21 +55,23 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command intakeON(){
-        intake1.set(1);
-        intake2.set(-1);
-        return null;
+        return runOnce(()-> intake1.set(1))
+          .andThen(run(()-> intake2.set(-1)))
+          .withName("Turn Intake ON");
+
     }
   
     public Command intakeOFF(){
-        intake1.set(0);
-        intake2.set(0);
-        return null;
+        return runOnce(()-> intake1.set(0))
+          .andThen(run(()-> intake2.set(0)))
+          .withName("Turn Intake OFF");
     }
     
     public Command intakeREV(){
-        intake1.set(-0.1);
-        intake2.set(0.5);
-        return null;
+        return runOnce(()-> intake1.set(-0.1))
+          .andThen(run(()-> intake2.set(0.5)))
+          .withName("Intake REV");
+        
     }
 
 
