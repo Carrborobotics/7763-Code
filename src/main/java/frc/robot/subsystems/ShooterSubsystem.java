@@ -27,24 +27,6 @@ public class ShooterSubsystem extends SubsystemBase {
         noteSensor.setLimitsVoltage(1.5, 4);
     }
 
-    public Command shooterFlip(){
-        // Turn shooter on/off
-        if(ShooterLeft.get() > 0.1 | ShooterLeft.get() < 0.1) {
-            ShooterLeft.set(0);
-            // ShooterRight.set(0);
-        }
-        else {
-            ShooterLeft.set(0.5);
-            // ShooterRight.set(0.5);
-        }
-        //if(ShooterRight.get() > 0.1 | ShooterRight.get() < 0.1) {
-        //    ShooterRight.set(0);
-        //}
-        //else {
-        //    ShooterRight.set(0.5);
-        //}
-        return null;
-    }
 
     public Command shooterON(){
         return runOnce(()-> ShooterLeft.set(0.2));
