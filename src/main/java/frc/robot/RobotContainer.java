@@ -48,8 +48,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("Turn Intake Off", shootersubsystem.intakeOFF());
 
-        NamedCommands.registerCommand("Turn Shooter On", shootersubsystem.shooterONLeft());
-        NamedCommands.registerCommand("Turn Shooter Off", shootersubsystem.shooterOFFLeft());
+        NamedCommands.registerCommand("Turn Shooter On", shootersubsystem.shooterON());
+        NamedCommands.registerCommand("Turn Shooter Off", shootersubsystem.shooterOFF());
 
         NamedCommands.registerCommand("Led On", m_vision.ledOn());
         NamedCommands.registerCommand("Led Off", m_vision.ledOff());
@@ -59,7 +59,6 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureButtonBindings();
-        configureAuto();
         m_vision.setPipeline(0);
 
         // Configure default commands
@@ -73,10 +72,6 @@ public class RobotContainer {
                 m_robotDrive));
     }
 
-    private void configureAuto() {
-
-
-    }
     
     private void configureButtonBindings() {
         //A button: puts the wheels to X
@@ -85,13 +80,9 @@ public class RobotContainer {
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
 
-        // // Left Bumper: Turn shooter on/off
-        // new JoystickButton(m_driverController, Button.kLeftBumper.value)
-        //     .onTrue(new RunCommand(()-> shootersubsystem.shooterFlip(), shootersubsystem));
-
         // Right Bumper: Turn intake on/off
         new JoystickButton(m_driverController, Button.kRightBumper.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.intakeON(), shootersubsystem));
+            .whileTrue(new RunCommand(()-> shootersubsystem.intakeON(), shootersubsystem));
 
         new JoystickButton(m_driverController, Button.kY.value)
             .onTrue(new RunCommand(()-> shootersubsystem.intakeREV(), shootersubsystem));
@@ -109,13 +100,10 @@ public class RobotContainer {
             .onTrue(new RunCommand(()-> m_vision.takeSnap(), m_vision));
 
         new JoystickButton(m_driverController, Button.kRightStick.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.shooterONLeft(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterON(), shootersubsystem));
 
         new JoystickButton(m_driverController, Button.kLeftStick.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.shooterOFFLeft(), shootersubsystem));
-
-
-        
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterOFF(), shootersubsystem));
         return;
     }
 
