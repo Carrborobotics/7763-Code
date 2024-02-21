@@ -47,15 +47,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command shooterON(){
-        //ShooterRight.set(0.5);
-        ShooterLeft.set(0.2);
-        return null;
+        return runOnce(()-> ShooterLeft.set(0.2));
     }
 
     public Command shooterOFF() {
-        //ShooterRight.set(0);
-        ShooterLeft.set(0);
-        return null;
+        return runOnce(()-> ShooterLeft.set(0));
     }
 
     public Command intakeON(){
