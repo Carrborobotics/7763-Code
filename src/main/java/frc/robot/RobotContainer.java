@@ -29,12 +29,11 @@ import frc.robot.subsystems.ShooterSubsystem;
  */  
 
 public class RobotContainer {
-  private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
 
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ShooterSubsystem shootersubsystem = new ShooterSubsystem();
-    //private final SendableChooser<Command> autoChooser;
     private final Limelight m_vision = new Limelight("limelight");
 
     // Define the controller being used
@@ -45,16 +44,16 @@ public class RobotContainer {
 
 
         // Register Named Commands
-        NamedCommands.registerCommand("IntakeON", shootersubsystem.intakeON());
+        NamedCommands.registerCommand("Turn Intake On", shootersubsystem.intakeON());
 
-        NamedCommands.registerCommand("IntakeOFF", shootersubsystem.intakeOFF());
+        NamedCommands.registerCommand("Turn Intake Off", shootersubsystem.intakeOFF());
 
-//        NamedCommands.registerCommand("ShooterON", shootersubsystem.shooterON());
-//        NamedCommands.registerCommand("ShooterOFF", shootersubsystem.shooterOFF());
+        NamedCommands.registerCommand("Turn Shooter On", shootersubsystem.shooterONLeft());
+        NamedCommands.registerCommand("Turn Shooter Off", shootersubsystem.shooterOFFLeft());
 
-        NamedCommands.registerCommand("LedOn", m_vision.ledOn());
-        NamedCommands.registerCommand("Ledoff", m_vision.ledOff());
-        NamedCommands.registerCommand("takeSnap", m_vision.takeSnap());
+        NamedCommands.registerCommand("Led On", m_vision.ledOn());
+        NamedCommands.registerCommand("Led Off", m_vision.ledOff());
+        NamedCommands.registerCommand("Take Snap", m_vision.takeSnap());
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -110,10 +109,10 @@ public class RobotContainer {
             .onTrue(new RunCommand(()-> m_vision.takeSnap(), m_vision));
 
         new JoystickButton(m_driverController, Button.kRightStick.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.shooterON(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterONLeft(), shootersubsystem));
 
         new JoystickButton(m_driverController, Button.kLeftStick.value)
-            .onTrue(new RunCommand(()-> shootersubsystem.shooterOFF(), shootersubsystem));
+            .onTrue(new RunCommand(()-> shootersubsystem.shooterOFFLeft(), shootersubsystem));
 
 
         
