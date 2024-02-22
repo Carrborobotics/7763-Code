@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase{
@@ -23,7 +23,8 @@ public class Limelight extends SubsystemBase{
     // Override some methods for using the limelight
     @Override
     public void periodic() {
-
+        SmartDashboard.putNumber("LL LED Mode", m_lime.getEntry("ledmode").getDouble(-1));
+        SmartDashboard.putNumber("LL Pipeline", getPipeline());
     }
 
     // poses
@@ -38,8 +39,8 @@ public class Limelight extends SubsystemBase{
         m_lime.getEntry("pipeline").setDouble((double) pipelineIndex);
     }
 
-    public int getPipeline() {
-        return (int) m_lime.getEntry("getpipe").getDouble(-1.0);
+    public double getPipeline() {
+        return (double) m_lime.getEntry("getpipe").getDouble(-1.0);
     }
 
     // Return ll name
@@ -53,22 +54,18 @@ public class Limelight extends SubsystemBase{
     }
 
         //LED on
-    public Command ledOn() {
+    public void ledOn() {
         m_lime.getEntry("ledmode").setNumber(3.0);
-        return null;
     }
 
     //LED off
-    public Command ledOff() {
+    public void ledOff() {
         m_lime.getEntry("ledMode").setNumber(1.0);
-        return null;
     }
 
-
     //take snapshot
-    public Command takeSnap() {
+    public void takeSnap() {
         m_lime.getEntry("snapshot").setNumber(1.0);
-        return null;
     }
 
 

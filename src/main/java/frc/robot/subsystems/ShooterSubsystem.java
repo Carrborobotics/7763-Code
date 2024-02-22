@@ -7,66 +7,61 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
-    /** Creates a new ShooterSubsystem. */
-    //CANSparkMax ShooterRight = new CANSparkMax(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
-    CANSparkMax ShooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
-    CANSparkMax intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
-    CANSparkMax intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
-    //CANSparkMax intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
-    AnalogTrigger noteSensor = new AnalogTrigger(Constants.ShooterConstants.kNoteSensorId);
 
-    //DigitalInput noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
-    
+    private CANSparkMax shooterLeft;
+    private CANSparkMax intake1;
+    private CANSparkMax intake2;
+    private DigitalInput noteSensor;
+
     public ShooterSubsystem() {
-        noteSensor.setLimitsVoltage(1.5, 4);
+
+        shooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
+        intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
+        intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
+        noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
     }
 
-    public Command shooterON(){
-        return runOnce(()-> ShooterLeft.set(0.2));
+    public void shooterON(){
+        shooterLeft.set(0.5);
     }
 
-    public Command shooterOFF() {
-        return runOnce(()-> ShooterLeft.set(0));
+    public void shooterREV(){
+        shooterLeft.set(-0.5);
     }
 
-    public Command intakeON(){
-        return runOnce(()-> intake1.set(1))
-          .andThen(run(()-> intake2.set(-1)))
-          .withName("Turn Intake ON");
+    public void shooterOFF() {
+        shooterLeft.set(0);
+    }
 
+    public void intakeON(){
+        intake1.set(1);
+        intake2.set(-1);
     }
   
-    public Command intakeOFF(){
-        return runOnce(()-> intake1.set(0))
-          .andThen(run(()-> intake2.set(0)))
-          .withName("Turn Intake OFF");
+    public void intakeOFF(){
+        intake1.set(0);
+        intake2.set(0);
     }
     
-    public Command intakeREV(){
-        return runOnce(()-> intake1.set(-0.1))
-          .andThen  (run(()-> intake2.set(0.5)))
-          .withName("Intake REV");
-        
+    public void intakeREV(){
+        intake1.set(-0.5);
+        intake2.set(0.5);        
+    }
+
+    public boolean getNoteSensor(){
+        return noteSensor.get();
     }
 
     @Override
     public void periodic() {
         // Handle checking the note sensor to see if the intake is loaded
         // noteSensor.get() is True if there is not a note
-
-         if(!noteSensor.getTriggerState()){
-             intake1.set(0);
-             intake2.set(0);
-         }
-         else{
-             intake1.set(1);
-             intake2.set(1);
-         }
+        SmartDashboard.putBoolean("Note Sensor", noteSensor.get());
    }
 }

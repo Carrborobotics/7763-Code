@@ -8,19 +8,18 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ShooterSubsystem;
-
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -30,28 +29,54 @@ import frc.robot.subsystems.ShooterSubsystem;
  */  
 
 public class RobotContainer {
+
+    // Create a robotcontainer to point at
+    private static RobotContainer m_robot = null;
+
+    public static void setRobot(RobotContainer robot){
+        m_robot = robot;
+    }
+
+    public static RobotContainer getRobot(){
+        return m_robot;
+    }
+
     private final SendableChooser<Command> autoChooser;
 
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    private final ShooterSubsystem shootersubsystem = new ShooterSubsystem();
+    private final ShooterSubsystem m_shooter = new ShooterSubsystem();
     private final Limelight m_vision = new Limelight("limelight");
 
     // Define the controller being used
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    
+    // Setup triggers
+    Trigger xButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
+    Trigger yButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+    Trigger aButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
+    Trigger bButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
+    Trigger startButton = new JoystickButton(m_driverController, XboxController.Button.kStart.value);
+    Trigger backButton = new JoystickButton(m_driverController, XboxController.Button.kBack.value);
+    Trigger leftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
+    Trigger rightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
+    Trigger leftStick = new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value);
+    Trigger rightStick = new JoystickButton(m_driverController, XboxController.Button.kRightStick.value);
 
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
 
-        System.out.println("Deploy Dir" + Filesystem.getDeployDirectory());
         // Register Named Commands
-        NamedCommands.registerCommand("Turn Intake On", shootersubsystem.intakeON());
-        NamedCommands.registerCommand("Turn Intake Off", shootersubsystem.intakeOFF());
-        NamedCommands.registerCommand("Turn Shooter On", shootersubsystem.shooterON());
-        NamedCommands.registerCommand("Turn Shooter Off", shootersubsystem.shooterOFF());
-        NamedCommands.registerCommand("Led On", m_vision.ledOn());
-        NamedCommands.registerCommand("Led Off", m_vision.ledOff());
-        NamedCommands.registerCommand("Take Snap", m_vision.takeSnap());
+
+        // For legacy autos
+        NamedCommands.registerCommand("intakeON", new RunCommand(() -> m_shooter.intakeON()));
+        NamedCommands.registerCommand("intakeOFF", new RunCommand(() -> m_shooter.intakeOFF()));
+        NamedCommands.registerCommand("shooterON", new RunCommand(() -> m_shooter.shooterON()));
+        NamedCommands.registerCommand("shooterOFF", new RunCommand(() -> m_shooter.shooterOFF()));
+        // For new autos
+        NamedCommands.registerCommand("Led On", new RunCommand(() -> m_vision.ledOn()));
+        NamedCommands.registerCommand("Led Off", new RunCommand(() -> m_vision.ledOff()));
+        NamedCommands.registerCommand("Take Snap", new RunCommand(() -> m_vision.takeSnap()));
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -68,54 +93,41 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true, true),
                 m_robotDrive));
+        
+        m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.intakeON()));
     }
-
     
     private void configureButtonBindings() {
-        //A button: puts the wheels to X
-        new JoystickButton(m_driverController, Button.kStart.value)
-            .whileTrue(new RunCommand(
-                () -> m_robotDrive.zeroHeading(),
-                m_robotDrive));
 
-        // Right Bumper: Turn intake on/off
-        new JoystickButton(m_driverController, Button.kRightBumper.value)
-            .whileTrue(shootersubsystem.intakeON());
+        // Button assigments
+        leftBumper.whileTrue(new RunCommand(() -> m_shooter.shooterREV()))
+            .onFalse(new RunCommand(() -> m_shooter.shooterOFF())
+        );
 
-        new JoystickButton(m_driverController, Button.kY.value)
-            .onTrue(shootersubsystem.intakeREV());
-    
-        new JoystickButton(m_driverController, Button.kX.value)
-            .onTrue(shootersubsystem.intakeOFF());
+        rightBumper.onTrue(new RunCommand(() -> m_shooter.intakeON())
+            .alongWith(new RunCommand(() -> m_shooter.shooterON()))
+            .andThen(Commands.waitSeconds(3))
+            .andThen(new RunCommand(() -> m_shooter.shooterOFF()))
+        );
+
+        yButton.whileTrue(new RunCommand( () -> m_shooter.intakeREV()))
+            .onFalse(new RunCommand(() -> m_shooter.intakeOFF())
+        );
+
+        startButton.onTrue(Commands.runOnce(() -> m_robotDrive.fixHeading()));
+        bButton.onTrue(Commands.runOnce(() -> m_shooter.intakeON()));
+
+        // Limit switch for detecting notes through intake
+        // Returns true if no note seen
+        Trigger noteSensor = new Trigger(() -> m_shooter.getNoteSensor());
         
-        new JoystickButton(m_driverController, Button.kA.value)
-            .onTrue(m_vision.ledOn());
-        
-        new JoystickButton(m_driverController, Button.kB.value)
-            .onTrue(m_vision.ledOff());
-
-        new JoystickButton(m_driverController, Button.kBack.value)
-            .onTrue(m_vision.takeSnap());
-
-        new JoystickButton(m_driverController, Button.kRightStick.value)
-            .onTrue(shootersubsystem.shooterON());
-
-        new JoystickButton(m_driverController, Button.kLeftStick.value)
-            .onTrue(shootersubsystem.shooterOFF());
-        return;
+        // Turn off intake and spool up shooter when note is sensed
+        noteSensor.onFalse(new RunCommand(() -> m_shooter.intakeOFF())
+            .alongWith(new RunCommand(() -> m_shooter.shooterON()))
+        );
     }
-
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
-
-    
     }
 }
