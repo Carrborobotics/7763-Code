@@ -50,22 +50,23 @@ public class ShooterSubsystem extends SubsystemBase {
     
     public Command intakeREV(){
         return runOnce(()-> intake1.set(-0.1))
-          .andThen(run(()-> intake2.set(0.5)))
+          .andThen  (run(()-> intake2.set(0.5)))
           .withName("Intake REV");
         
     }
-
 
     @Override
     public void periodic() {
         // Handle checking the note sensor to see if the intake is loaded
         // noteSensor.get() is True if there is not a note
-         System.out.println(noteSensor.getTriggerState());
+
          if(!noteSensor.getTriggerState()){
-             intakeOFF();
+             intake1.set(0);
+             intake2.set(0);
          }
          else{
-             intakeON();
+             intake1.set(1);
+             intake2.set(1);
          }
    }
 }
