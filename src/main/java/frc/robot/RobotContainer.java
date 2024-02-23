@@ -101,29 +101,38 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
 
-        // Button assigments
+        // Purge the shooter
         leftBumper.whileTrue(new InstantCommand(() -> m_shooter.shooterREV()))
             .onFalse(new InstantCommand(() -> m_shooter.shooterOFF())
         );
 
-        rightBumper.onTrue(Commands.parallel(new InstantCommand(() -> m_shooter.intakeON()),
-            (new InstantCommand(() -> m_shooter.shooterON()))));
+        // Shoot the shot
+        rightBumper.onTrue(Commands.sequence(
+            Commands.parallel(
+                new InstantCommand(() -> m_shooter.intakeON()),
+                new InstantCommand(() -> m_shooter.shooterON())
+            ).withTimeout(2),
+                new InstantCommand(() -> m_shooter.shooterOFF())));
 
-        aButton.onTrue(new InstantCommand(() -> m_shooter.shooterOFF()));
-        xButton.onTrue(new InstantCommand(() -> m_shooter.intakeOFF()));
-        yButton.whileTrue(new InstantCommand( () -> m_shooter.intakeREV()))
-            .onFalse(new InstantCommand(() -> m_shooter.intakeOFF()));
+        // Intake manual controls (a/b buttons)
+        aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON()));    
+        bButton.onTrue(new InstantCommand(() -> m_shooter.intakeOFF()));
 
+        // Shooter manual controls (x/y buttons)
+        xButton.onTrue(new InstantCommand(() -> m_shooter.shooterON()));
+        yButton.onTrue(new InstantCommand(() -> m_shooter.shooterOFF()));
+
+        // Start button fixes the odometry and resets to +90deg
         startButton.onTrue(Commands.runOnce(() -> m_robotDrive.fixHeading()));
-        bButton.onTrue(new InstantCommand(() -> m_shooter.intakeON()));
 
         // Limit switch for detecting notes through intake
         // Returns true if no note seen
         Trigger noteSensor = new Trigger(() -> m_shooter.getNoteSensor());
         
         // Turn off intake and spool up shooter when note is sensed
-        noteSensor.onFalse(Commands.parallel(new InstantCommand(() -> m_shooter.intakeOFF()),
-            (new InstantCommand(() -> m_shooter.shooterON()))));
+        noteSensor.onFalse(Commands.parallel(
+            new InstantCommand(() -> m_shooter.intakeOFF()),
+            new InstantCommand(() -> m_shooter.shooterON())));
     }
 
     public Command getAutonomousCommand() {
