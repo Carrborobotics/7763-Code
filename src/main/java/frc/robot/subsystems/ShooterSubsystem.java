@@ -15,6 +15,7 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
 
     private CANSparkMax shooterLeft;
+    private CANSparkMax shooterRight;
     private CANSparkMax intake1;
     private CANSparkMax intake2;
     private DigitalInput noteSensor;
@@ -22,21 +23,25 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterSubsystem() {
 
         shooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
+        shooterRight = new CANSparkMax(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
         intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
         intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
     }
 
     public void shooterON(){
-        shooterLeft.set(0.5);
+        shooterLeft.set(1);
+        shooterRight.set(-1);
     }
 
     public void shooterREV(){
-        shooterLeft.set(-0.5);
+        shooterLeft.set(-1);
+        shooterRight.set(1);
     }
 
     public void shooterOFF() {
         shooterLeft.set(0);
+        shooterRight.set(0);
     }
 
     public void intakeON(){

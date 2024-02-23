@@ -17,6 +17,7 @@ public class Limelight extends SubsystemBase{
     public Limelight(String name) {
         m_lime = NetworkTableInstance.getDefault().getTable(name);
         m_lime.getEntry("ledmode").setDouble(3.0);
+        m_lime.getEntry("pipeline").setNumber(0);
         m_name = name;
     }
 
@@ -67,8 +68,5 @@ public class Limelight extends SubsystemBase{
     public void takeSnap() {
         m_lime.getEntry("snapshot").setNumber(1.0);
     }
-
-
-    
 
 }

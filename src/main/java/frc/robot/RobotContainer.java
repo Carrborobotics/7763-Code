@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
@@ -69,14 +71,15 @@ public class RobotContainer {
         // Register Named Commands
 
         // For legacy autos
-        NamedCommands.registerCommand("intakeON", new RunCommand(() -> m_shooter.intakeON()));
-        NamedCommands.registerCommand("intakeOFF", new RunCommand(() -> m_shooter.intakeOFF()));
-        NamedCommands.registerCommand("shooterON", new RunCommand(() -> m_shooter.shooterON()));
-        NamedCommands.registerCommand("shooterOFF", new RunCommand(() -> m_shooter.shooterOFF()));
+        NamedCommands.registerCommand("IntakeON", new InstantCommand(() -> m_shooter.intakeON()));
+        NamedCommands.registerCommand("intakeON", new InstantCommand(() -> m_shooter.intakeON()));
+        NamedCommands.registerCommand("IntakeOFF", new InstantCommand(() -> m_shooter.intakeOFF()));
+        NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON()));
+        NamedCommands.registerCommand("shooterOFF", new InstantCommand(() -> m_shooter.shooterOFF()));
         // For new autos
-        NamedCommands.registerCommand("Led On", new RunCommand(() -> m_vision.ledOn()));
-        NamedCommands.registerCommand("Led Off", new RunCommand(() -> m_vision.ledOff()));
-        NamedCommands.registerCommand("Take Snap", new RunCommand(() -> m_vision.takeSnap()));
+        NamedCommands.registerCommand("Led On", new InstantCommand(() -> m_vision.ledOn()));
+        NamedCommands.registerCommand("Led Off", new InstantCommand(() -> m_vision.ledOff()));
+        NamedCommands.registerCommand("Take Snap", new InstantCommand(() -> m_vision.takeSnap()));
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -94,37 +97,33 @@ public class RobotContainer {
                     true, true),
                 m_robotDrive));
         
-        m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.intakeON()));
     }
     
     private void configureButtonBindings() {
 
         // Button assigments
-        leftBumper.whileTrue(new RunCommand(() -> m_shooter.shooterREV()))
-            .onFalse(new RunCommand(() -> m_shooter.shooterOFF())
+        leftBumper.whileTrue(new InstantCommand(() -> m_shooter.shooterREV()))
+            .onFalse(new InstantCommand(() -> m_shooter.shooterOFF())
         );
 
-        rightBumper.onTrue(new RunCommand(() -> m_shooter.intakeON())
-            .alongWith(new RunCommand(() -> m_shooter.shooterON()))
-            .andThen(Commands.waitSeconds(3))
-            .andThen(new RunCommand(() -> m_shooter.shooterOFF()))
-        );
+        rightBumper.onTrue(Commands.parallel(new InstantCommand(() -> m_shooter.intakeON()),
+            (new InstantCommand(() -> m_shooter.shooterON()))));
 
-        yButton.whileTrue(new RunCommand( () -> m_shooter.intakeREV()))
-            .onFalse(new RunCommand(() -> m_shooter.intakeOFF())
-        );
+        aButton.onTrue(new InstantCommand(() -> m_shooter.shooterOFF()));
+        xButton.onTrue(new InstantCommand(() -> m_shooter.intakeOFF()));
+        yButton.whileTrue(new InstantCommand( () -> m_shooter.intakeREV()))
+            .onFalse(new InstantCommand(() -> m_shooter.intakeOFF()));
 
         startButton.onTrue(Commands.runOnce(() -> m_robotDrive.fixHeading()));
-        bButton.onTrue(Commands.runOnce(() -> m_shooter.intakeON()));
+        bButton.onTrue(new InstantCommand(() -> m_shooter.intakeON()));
 
         // Limit switch for detecting notes through intake
         // Returns true if no note seen
         Trigger noteSensor = new Trigger(() -> m_shooter.getNoteSensor());
         
         // Turn off intake and spool up shooter when note is sensed
-        noteSensor.onFalse(new RunCommand(() -> m_shooter.intakeOFF())
-            .alongWith(new RunCommand(() -> m_shooter.shooterON()))
-        );
+        noteSensor.onFalse(Commands.parallel(new InstantCommand(() -> m_shooter.intakeOFF()),
+            (new InstantCommand(() -> m_shooter.shooterON()))));
     }
 
     public Command getAutonomousCommand() {

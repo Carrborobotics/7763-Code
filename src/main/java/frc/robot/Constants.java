@@ -32,7 +32,7 @@ public final class Constants {
     public static final int kShooterRightId = 15;
     public static final int kintake1Id = 12;
     public static final int kintake2Id = 13;
-    public static final int kNoteSensorId = 0;
+    public static final int kNoteSensorId = 7;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
