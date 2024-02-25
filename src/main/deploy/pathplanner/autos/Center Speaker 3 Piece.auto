@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2488731088056972,
+      "y": 5.553600421791921
+    },
+    "rotation": -179.6551613896102
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker 2 - Close 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker 2 - Close 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker 2 - Close 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
