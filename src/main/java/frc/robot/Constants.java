@@ -29,15 +29,15 @@ public final class Constants {
   public static final class ShooterConstants {
 
     public static final int kShooterLeftId = 14;
-    public static final int kShooterRightId = 15;
+    public static final int kShooterRightId = 13;
     public static final int kintake1Id = 12;
-    public static final int kintake2Id = 13;
+    public static final int kintake2Id = 15;
     public static final int kNoteSensorId = 7;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1; //def: 4.8
+    public static final double kMaxSpeedMetersPerSecond = 5; //def: 4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double kDirectionSlewRate = 6.0; // radians per second
