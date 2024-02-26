@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,8 +19,14 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
 import frc.utils.SwerveUtils;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -102,6 +109,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    fixHeading();
+    
     // Configure the AutoBuilder last
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
@@ -171,6 +180,24 @@ public class DriveSubsystem extends SubsystemBase {
         pose);
   }
 
+   double limelightAimProp() {
+        double kP = 0.02; // 0.035
+        double targetAngularVel = LimelightHelpers.getTX("limelight") * kP;
+        //targetAngularVel *= DriveConstants.kMaxAngularSpeed;
+        targetAngularVel *= -1;
+        SmartDashboard.putNumber("Angular Vel", targetAngularVel);
+        return targetAngularVel;
+    }
+  
+    double limelightRangeProp() {
+        double kP = 0.2; // 0.1
+        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
+        //targetForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+        targetForwardSpeed *= -1;
+        SmartDashboard.putNumber("Forward Speed", targetForwardSpeed);
+        return targetForwardSpeed; 
+    }
+
   /**
    * Method to drive the robot using joystick info.
    *
@@ -185,7 +212,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     double xSpeedCommanded;
     double ySpeedCommanded;
-
+    if (LimelightHelpers.getTV("limelight")) {
+      ySpeed = limelightRangeProp();
+      rot = limelightAimProp();
+      fieldRelative = false;
+      rateLimit = false;
+    }
     if (rateLimit) {
       // Convert XY to polar for rate limiting
       double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
@@ -237,8 +269,10 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
+    
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        fieldRelative
+        
+      fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
                 Rotation2d.fromDegrees(-m_gyro.getAngle()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));

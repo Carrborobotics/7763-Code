@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 
 public class Limelight extends SubsystemBase{
     
@@ -25,6 +26,9 @@ public class Limelight extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("LL LED Mode", m_lime.getEntry("ledmode").getDouble(-1));
         SmartDashboard.putNumber("LL Pipeline", getPipeline());
+        SmartDashboard.putNumber("TX", m_lime.getEntry("tx").getDouble(-1));
+        SmartDashboard.putNumber("TY", m_lime.getEntry("ty").getDouble(-1));
+        SmartDashboard.putBoolean("TV", LimelightHelpers.getTV(m_name));
     }
 
     // poses
@@ -48,6 +52,9 @@ public class Limelight extends SubsystemBase{
         return m_name;
     }
 
+    public boolean getTVVal() {
+        return LimelightHelpers.getTV(m_name);
+    }
     // Update LED setting
     public void setLights(int status) {
         m_lime.getEntry("ledmode").setNumber(status);

@@ -8,6 +8,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -48,7 +51,6 @@ public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-    private final Limelight m_vision = new Limelight("limelight");
 
     // Define the controller being used
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -76,18 +78,20 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeOFF", new InstantCommand(() -> m_shooter.intakeOFF()));
         NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON()));
         NamedCommands.registerCommand("shooterOFF", new InstantCommand(() -> m_shooter.shooterOFF()));
-        // For new autos
-        NamedCommands.registerCommand("Led On", new InstantCommand(() -> m_vision.ledOn()));
-        NamedCommands.registerCommand("Led Off", new InstantCommand(() -> m_vision.ledOff()));
-        NamedCommands.registerCommand("Take Snap", new InstantCommand(() -> m_vision.takeSnap()));
+        NamedCommands.registerCommand("Shoot", (Commands.sequence(
+            Commands.parallel(
+                new InstantCommand(() -> m_shooter.intakeON()),
+                new InstantCommand(() -> m_shooter.shooterON())
+            ).withTimeout(2),
+                new InstantCommand(() -> m_shooter.shooterOFF()))));
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureButtonBindings();
-        m_vision.setPipeline(0);
+        //m_vision.setPipeline(1);
 
-        // Configure default commands
+         
         m_robotDrive.setDefaultCommand(
             new RunCommand(
                 () -> m_robotDrive.drive(
@@ -96,9 +100,8 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true, true),
                 m_robotDrive));
-        
     }
-    
+
     private void configureButtonBindings() {
 
         // Purge the shooter
@@ -135,7 +138,11 @@ public class RobotContainer {
             new InstantCommand(() -> m_shooter.shooterON())));
     }
 
+ 
+
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
+
+
 }
