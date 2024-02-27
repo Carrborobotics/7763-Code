@@ -34,6 +34,11 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.set(-1);
     }
 
+    public void shooterON(double speed){
+        shooterLeft.set(speed);
+        shooterRight.set(-speed);
+    }
+
     public void shooterREV(){
         shooterLeft.set(-1);
         shooterRight.set(1);
@@ -47,6 +52,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public void intakeON(){
         intake1.set(1);
         intake2.set(-1);
+    }
+
+    public void intakeON(double speed){
+        intake1.set(speed);
+        intake2.set(-speed);
     }
   
     public void intakeOFF(){

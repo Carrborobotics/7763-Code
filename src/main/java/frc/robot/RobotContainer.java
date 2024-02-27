@@ -89,8 +89,6 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureButtonBindings();
-        //m_vision.setPipeline(1);
-
          
         m_robotDrive.setDefaultCommand(
             new RunCommand(
@@ -98,24 +96,30 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true, true),
+                    true, true, rightStick.getAsBoolean()),
                 m_robotDrive));
     }
 
     private void configureButtonBindings() {
 
-        // Purge the shooter
-        leftBumper.whileTrue(new InstantCommand(() -> m_shooter.shooterREV()))
-            .onFalse(new InstantCommand(() -> m_shooter.shooterOFF())
-        );
+        // Shoot the shot at amp
+        leftBumper.onTrue(Commands.sequence(
+            Commands.parallel(
+                new InstantCommand(() -> m_shooter.intakeON(0.1)),
+                new InstantCommand(() -> m_shooter.shooterON(0.1))
+            ).withTimeout(2),
+                new InstantCommand(() -> m_shooter.shooterOFF()),
+                new InstantCommand(() -> m_shooter.intakeON())
+            ));
 
-        // Shoot the shot
+        // Shoot the shot at speaker
         rightBumper.onTrue(Commands.sequence(
             Commands.parallel(
                 new InstantCommand(() -> m_shooter.intakeON()),
                 new InstantCommand(() -> m_shooter.shooterON())
             ).withTimeout(2),
-                new InstantCommand(() -> m_shooter.shooterOFF())));
+                new InstantCommand(() -> m_shooter.shooterOFF())
+            ));
 
         // Intake manual controls (a/b buttons)
         aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON()));    
@@ -128,6 +132,11 @@ public class RobotContainer {
         // Start button fixes the odometry and resets to +90deg
         startButton.onTrue(Commands.runOnce(() -> m_robotDrive.fixHeading()));
 
+        // Purge the shooter
+        backButton.whileTrue(new InstantCommand(() -> m_shooter.shooterREV()))
+            .onFalse(new InstantCommand(() -> m_shooter.shooterOFF())
+        );
+
         // Limit switch for detecting notes through intake
         // Returns true if no note seen
         Trigger noteSensor = new Trigger(() -> m_shooter.getNoteSensor());
@@ -138,11 +147,7 @@ public class RobotContainer {
             new InstantCommand(() -> m_shooter.shooterON())));
     }
 
- 
-
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
-
-
 }

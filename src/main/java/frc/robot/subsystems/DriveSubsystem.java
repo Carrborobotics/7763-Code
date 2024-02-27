@@ -208,11 +208,11 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, boolean useVision) {
 
     double xSpeedCommanded;
     double ySpeedCommanded;
-    if (LimelightHelpers.getTV("limelight")) {
+    if (LimelightHelpers.getTV("limelight") && useVision) {
       ySpeed = limelightRangeProp();
       rot = limelightAimProp();
       fieldRelative = false;
