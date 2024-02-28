@@ -29,15 +29,10 @@ public class ShooterSubsystem extends SubsystemBase {
         intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
     }
-
-    public void shooterON(){
-        shooterLeft.set(0.125);
-        shooterRight.set(-0.125);
-    }
-
-    public void shooterAMP(double speed){
-        shooterLeft.set(speed);
-        shooterRight.set(-speed);
+    // should be 0.125 for amp and 1 for speaker 
+    public void shooterON(double inputSpeed){
+        shooterLeft.set(inputSpeed);
+        shooterRight.set(-inputSpeed);
     }
 
     public void shooterREV(){
@@ -50,14 +45,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.set(0);
     }
 
-    public void intakeON(){
-        intake1.set(0.75);
-        intake2.set(-0.75);
-    }
-
-    public void intakeON(double speed){
-        intake1.set(speed);
-        intake2.set(-speed);
+    public void intakeON(double inputSpeed){
+        intake1.set(inputSpeed);
+        intake2.set(-inputSpeed);
     }
   
     public void intakeOFF(){
@@ -79,8 +69,5 @@ public class ShooterSubsystem extends SubsystemBase {
         // Handle checking the note sensor to see if the intake is loaded
         // noteSensor.get() is True if there is not a note
         SmartDashboard.putBoolean("Note Sensor", noteSensor.get());
-        SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
-        SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
-        SmartDashboard.putBoolean("TV", LimelightHelpers.getTV("limelight"));
    }
 }

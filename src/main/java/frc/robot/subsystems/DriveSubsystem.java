@@ -152,6 +152,9 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     SmartDashboard.putNumber("Heading", getHeading());
+    SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
+    SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
+    SmartDashboard.putBoolean("TV", LimelightHelpers.getTV("limelight"));
   }
 
   /**
