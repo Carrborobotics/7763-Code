@@ -181,7 +181,7 @@ public class DriveSubsystem extends SubsystemBase {
         double kP = 0.015; // 0.035
         double targetAngularVel = LimelightHelpers.getTX("limelight") * kP;
         //targetAngularVel *= DriveConstants.kMaxAngularSpeed;
-        targetAngularVel *= -3;
+        targetAngularVel *= -1;
         SmartDashboard.putNumber("Angular Vel", targetAngularVel);
         return targetAngularVel;
     }
@@ -190,7 +190,7 @@ public class DriveSubsystem extends SubsystemBase {
         double kP = 0.1; // 0.1
         double targetForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
         //targetForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
-        targetForwardSpeed *= 1;
+        targetForwardSpeed *= -0.5;
         SmartDashboard.putNumber("Forward Speed", targetForwardSpeed);
         return targetForwardSpeed; 
     }
