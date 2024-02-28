@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -28,6 +27,9 @@ public class ShooterSubsystem extends SubsystemBase {
         intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
         intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
+
+        // Start up with the intake ON
+        intakeON(1);
     }
     // should be 0.125 for amp and 1 for speaker 
     public void shooterON(double inputSpeed){
