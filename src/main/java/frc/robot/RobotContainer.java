@@ -98,7 +98,6 @@ public class RobotContainer {
                     true, true, rightStick.getAsBoolean()),
                 m_robotDrive));
 
-        m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
     }
 
     private void configureButtonBindings() {
