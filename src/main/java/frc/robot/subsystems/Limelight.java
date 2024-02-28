@@ -26,9 +26,7 @@ public class Limelight extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("LL LED Mode", m_lime.getEntry("ledmode").getDouble(-1));
         SmartDashboard.putNumber("LL Pipeline", getPipeline());
-        SmartDashboard.putNumber("TX", m_lime.getEntry("tx").getDouble(-1));
-        SmartDashboard.putNumber("TY", m_lime.getEntry("ty").getDouble(-1));
-        SmartDashboard.putBoolean("TV", LimelightHelpers.getTV(m_name));
+
     }
 
     // poses

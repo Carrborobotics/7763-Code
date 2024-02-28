@@ -106,7 +106,7 @@ public class RobotContainer {
         leftBumper.onTrue(Commands.sequence(
             Commands.parallel(
                 new InstantCommand(() -> m_shooter.intakeON(0.1)),
-                new InstantCommand(() -> m_shooter.shooterON(0.1))
+                new InstantCommand(() -> m_shooter.shooterAMP(0.1))
             ).withTimeout(2),
                 new InstantCommand(() -> m_shooter.shooterOFF()),
                 new InstantCommand(() -> m_shooter.intakeON())

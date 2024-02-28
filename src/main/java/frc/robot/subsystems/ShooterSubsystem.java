@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -30,11 +31,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void shooterON(){
-        shooterLeft.set(1);
-        shooterRight.set(-1);
+        shooterLeft.set(0.125);
+        shooterRight.set(-0.125);
     }
 
-    public void shooterON(double speed){
+    public void shooterAMP(double speed){
         shooterLeft.set(speed);
         shooterRight.set(-speed);
     }
@@ -50,8 +51,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void intakeON(){
-        intake1.set(1);
-        intake2.set(-1);
+        intake1.set(0.75);
+        intake2.set(-0.75);
     }
 
     public void intakeON(double speed){
@@ -78,5 +79,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // Handle checking the note sensor to see if the intake is loaded
         // noteSensor.get() is True if there is not a note
         SmartDashboard.putBoolean("Note Sensor", noteSensor.get());
+        SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
+        SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
+        SmartDashboard.putBoolean("TV", LimelightHelpers.getTV("limelight"));
    }
 }
