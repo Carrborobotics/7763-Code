@@ -34,8 +34,8 @@ public final class Constants {
     public static final int kintake2Id = 15;
     public static final int kNoteSensorId = 7;
 
-    public static final double kShooterAmpSpeed = 0.125;    // first test passed at 0.125
-    public static final double kIntakeAmpSpeed = 0.75;      // first test passed at 0.75
+    public static final double kShooterAmpSpeed = 0.2;    // first test passed at 0.125
+    public static final double kIntakeAmpSpeed = 0.1;      // first test passed at 0.75
     public static final double kShooterSpeakerSpeed = 1.0;
     public static final double kIntakeSpeakerSpeed = 1.0;
   }

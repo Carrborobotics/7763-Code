@@ -100,14 +100,14 @@ public class RobotContainer {
                     true, true, rightStick.getAsBoolean()),
                 m_robotDrive));
 
-        m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
+//        m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
     }
 
     private void configureButtonBindings() {
 
         // Shoot the shot at amp
         leftBumper.onTrue(Commands.sequence(
-            new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed)).withTimeout(0.5),
+            new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed)).withTimeout(3.5),
             new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)).withTimeout(2),
             Commands.parallel(
                 new InstantCommand(() -> m_shooter.shooterOFF()),
