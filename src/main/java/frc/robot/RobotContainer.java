@@ -75,15 +75,20 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeOFF", new InstantCommand(() -> m_shooter.intakeOFF()));
         NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)));
         NamedCommands.registerCommand("shooterOFF", new InstantCommand(() -> m_shooter.shooterOFF()));
-        NamedCommands.registerCommand("Shoot", (Commands.sequence(
-            Commands.parallel(
-                new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)),
-                new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed))
-            ),
-                new WaitCommand(2),
-                new InstantCommand(() -> m_shooter.shooterOFF())
-        )));
+
+        // New autos use below
+        NamedCommands.registerCommand("Shoot", shootSpeaker());
         
+        // Add command to have limelight find note
+        NamedCommands.registerCommand("Find Note",         
+            new RunCommand(
+                () -> m_robotDrive.drive(
+                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                    true, true, true))
+        );
+
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -103,22 +108,10 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         // Shoot at the amp
-        leftBumper.onTrue(
-            (new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed)))
-            .andThen(new WaitCommand(0.5))
-            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
-            .andThen(new WaitCommand(2))
-            .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
-            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)))
-        );
+        leftBumper.onTrue(shootAmp());
 
         // Shoot the shot at speaker
-        rightBumper.onTrue(
-            new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
-            .andThen(new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)))
-            .andThen(new WaitCommand(2))
-            .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
-        );
+        rightBumper.onTrue(shootSpeaker());
  
         // Intake manual controls (a/b buttons)
         aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));    
@@ -141,10 +134,30 @@ public class RobotContainer {
         Trigger noteSensor = new Trigger(() -> m_shooter.getNoteSensor());
         
         // Turn off intake and spool up shooter when note is sensed
-        noteSensor.onFalse(Commands.parallel(
-            new InstantCommand(() -> m_shooter.intakeOFF()),
-            new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed))
-        ));
+        noteSensor.onFalse(noteSensed());
+    }
+    private Command shootAmp() {
+        return (new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed)))
+            .andThen(new WaitCommand(0.3))
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
+            .andThen(new WaitCommand(0.75))
+            .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
+        );
+    }
+
+    private Command noteSensed(){
+        return (new InstantCommand(() -> m_shooter.intakeOFF())
+            .andThen(new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)))
+        );
+    }
+
+    private Command shootSpeaker() {
+        return new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
+            .andThen(new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)))
+            .andThen(new WaitCommand(0.75))
+            .andThen(new InstantCommand(() -> m_shooter.shooterOFF())
+        );
     }
 
     public Command getAutonomousCommand() {

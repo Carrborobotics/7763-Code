@@ -12,11 +12,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.WPIUtilJNI;
 import com.kauailabs.navx.frc.AHRS;
-
+import java.util.Map;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
@@ -62,6 +66,24 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
+
+  // Setup limelight scaling to be on shuffleboard
+  private double m_speedScaler = 0.015;
+  private double m_rotScaler = 0.05;
+
+  private ShuffleboardTab tabSelected = Shuffleboard.getTab("SmartDashboard");
+
+  private GenericEntry ll_speed_scale = tabSelected
+    .add("LL Speed Scaler", m_speedScaler)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(Map.of("min", 0, "max", 0.1))
+    .getEntry();
+ 
+  private GenericEntry ll_rot_scale = tabSelected
+    .add("LL Rotation Scaler", m_rotScaler)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(Map.of("min", 0, "max", 0.1))
+    .getEntry();
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -148,7 +170,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Heading", getHeading());
     SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
     SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
-    SmartDashboard.putBoolean("TV", LimelightHelpers.getTV("limelight"));
+    SmartDashboard.putBoolean("Targetted", LimelightHelpers.getTV("limelight"));
   }
 
   /**
@@ -178,19 +200,17 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
    double limelightAimProp() {
-        double kP = 0.015; // 0.035
-        double targetAngularVel = LimelightHelpers.getTX("limelight") * kP;
-        //targetAngularVel *= DriveConstants.kMaxAngularSpeed;
+        //double kP = 0.015; // 0.035
+        double targetAngularVel = LimelightHelpers.getTX("limelight") * ll_rot_scale.getDouble(1);
         targetAngularVel *= -1;
         SmartDashboard.putNumber("Angular Vel", targetAngularVel);
         return targetAngularVel;
     }
   
     double limelightRangeProp() {
-        double kP = 0.1; // 0.1
-        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
-        //targetForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
-        targetForwardSpeed *= -0.5;
+        //double kP = 0.1; // 0.1
+        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * ll_speed_scale.getDouble(1);
+        targetForwardSpeed *= -1;
         SmartDashboard.putNumber("Forward Speed", targetForwardSpeed);
         return targetForwardSpeed; 
     }
@@ -266,7 +286,6 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-    
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         
       fieldRelative
