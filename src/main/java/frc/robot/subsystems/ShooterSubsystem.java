@@ -64,8 +64,14 @@ public class ShooterSubsystem extends SubsystemBase {
         intake2.set(0.5);        
     }
 
+    // Default to false with note
     public boolean getNoteSensor(){
         return noteSensor.get();
+    }
+
+    // Default to true with note
+    public boolean getInvNoteSensor(){
+        return !noteSensor.get();
     }
 
     @Override

@@ -84,7 +84,7 @@ public class RobotContainer {
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
-
+    
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
 
@@ -110,7 +110,7 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true, true, true)))
-                    .until(m_shooter::getNoteSensor)
+                    .until(m_shooter::getInvNoteSensor)
                     .withTimeout(1)
             .andThen(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))
         );
