@@ -125,7 +125,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-    fixHeading();
+    //fixHeading();
     
     // Configure the AutoBuilder last
     AutoBuilder.configureHolonomic(

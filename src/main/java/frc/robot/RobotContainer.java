@@ -6,9 +6,11 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
+import java.util.Map;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -66,6 +68,23 @@ public class RobotContainer {
     Trigger leftStick = new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value);
     Trigger rightStick = new JoystickButton(m_driverController, XboxController.Button.kRightStick.value);
 
+    private double m_ampSpeed = ShooterConstants.kShooterAmpSpeed;
+    private double m_speakerSpeed = ShooterConstants.kShooterSpeakerSpeed;
+
+    private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
+
+    private GenericEntry amp_speed = tabSelected
+        .add("Amp Speed Scale", m_ampSpeed)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1))
+        .getEntry();
+    
+    private GenericEntry speaker_speed = tabSelected
+        .add("Speaker Speed Scaler", m_speakerSpeed)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1))
+        .getEntry();
+
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
 
@@ -75,20 +94,20 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeON", new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
         NamedCommands.registerCommand("intakeON", new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
         NamedCommands.registerCommand("IntakeOFF", new InstantCommand(() -> m_shooter.intakeOFF()));
-        NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)));
+        NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))));
         NamedCommands.registerCommand("shooterOFF", new InstantCommand(() -> m_shooter.shooterOFF()));
 
         // New autos use below
         NamedCommands.registerCommand("Shoot", shootSpeaker());
         
         // Add command to have limelight find note
-        NamedCommands.registerCommand("Find Note",         
+        NamedCommands.registerCommand("FindNote",         
             new RunCommand(
                 () -> m_robotDrive.drive(
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true, true, true))
+                    true, true, true)).withTimeout(1)
         );
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -120,7 +139,7 @@ public class RobotContainer {
         bButton.onTrue(new InstantCommand(() -> m_shooter.intakeOFF()));
 
         // Shooter manual controls (x/y buttons)
-        xButton.onTrue(new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)));
+        xButton.onTrue(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))));
         yButton.onTrue(new InstantCommand(() -> m_shooter.shooterOFF()));
 
         // Start button fixes the odometry and resets to +90deg
@@ -139,10 +158,10 @@ public class RobotContainer {
         noteSensor.onFalse(noteSensed());
     }
     private Command shootAmp() {
-        return (new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed)))
+        return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
             .andThen(new WaitCommand(0.3))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
-            .andThen(new WaitCommand(0.75))
+            .andThen(new WaitCommand(1.5))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
         );
@@ -150,14 +169,14 @@ public class RobotContainer {
 
     private Command noteSensed(){
         return (new InstantCommand(() -> m_shooter.intakeOFF())
-            .andThen(new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)))
+            .andThen(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))))
         );
     }
 
     private Command shootSpeaker() {
         return new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
-            .andThen(new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterSpeakerSpeed)))
-            .andThen(new WaitCommand(0.75))
+            .andThen(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))))
+            .andThen(new WaitCommand(0.1))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF())
         );
     }

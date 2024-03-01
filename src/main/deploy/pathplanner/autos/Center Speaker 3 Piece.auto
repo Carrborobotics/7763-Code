@@ -5,12 +5,18 @@
       "x": 1.2488731088056972,
       "y": 5.553600421791921
     },
-    "rotation": -179.6551613896102
+    "rotation": 92.44161655517686
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
         {
           "type": "path",
           "data": {
@@ -18,15 +24,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Center Speaker"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Speaker"
           }
         },
         {
