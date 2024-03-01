@@ -67,22 +67,22 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
-  // Setup limelight scaling to be on shuffleboard
-  private double m_speedScaler = 0.015;
-  private double m_rotScaler = 0.05;
+  // Setup limelight scaling to be on shuffleboard ( normalized )
+  private double m_speedScaler = 1.5;
+  private double m_rotScaler = 5;
 
-  private ShuffleboardTab tabSelected = Shuffleboard.getTab("SmartDashboard");
+  private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
 
   private GenericEntry ll_speed_scale = tabSelected
     .add("LL Speed Scaler", m_speedScaler)
     .withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 0.1))
+    .withProperties(Map.of("min", 0, "max", 5))
     .getEntry();
  
   private GenericEntry ll_rot_scale = tabSelected
     .add("LL Rotation Scaler", m_rotScaler)
     .withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 0.1))
+    .withProperties(Map.of("min", 0, "max", 10))
     .getEntry();
 
   // Odometry class for tracking robot pose
@@ -201,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
 
    double limelightAimProp() {
         //double kP = 0.015; // 0.035
-        double targetAngularVel = LimelightHelpers.getTX("limelight") * ll_rot_scale.getDouble(1);
+        double targetAngularVel = LimelightHelpers.getTX("limelight") * ll_rot_scale.getDouble(1) / 100;
         targetAngularVel *= -1;
         SmartDashboard.putNumber("Angular Vel", targetAngularVel);
         return targetAngularVel;
@@ -209,7 +209,7 @@ public class DriveSubsystem extends SubsystemBase {
   
     double limelightRangeProp() {
         //double kP = 0.1; // 0.1
-        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * ll_speed_scale.getDouble(1);
+        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * ll_speed_scale.getDouble(1) / 100;
         targetForwardSpeed *= -1;
         SmartDashboard.putNumber("Forward Speed", targetForwardSpeed);
         return targetForwardSpeed; 

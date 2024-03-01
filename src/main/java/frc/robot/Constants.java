@@ -37,7 +37,7 @@ public final class Constants {
     public static final double kShooterAmpSpeed = 0.13;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
 
     public static final double kIntakeAmpSpeed = 0.8;      // first test passed at 0.75
-    public static final double kShooterSpeakerSpeed = 1.0;
+    public static final double kShooterSpeakerSpeed = 0.5;
     public static final double kIntakeSpeakerSpeed = 1.0;
   }
   public static final class DriveConstants {
