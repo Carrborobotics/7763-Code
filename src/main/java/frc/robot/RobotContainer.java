@@ -100,14 +100,19 @@ public class RobotContainer {
         // New autos use below
         NamedCommands.registerCommand("Shoot", shootSpeaker());
         
-        // Add command to have limelight find note
-        NamedCommands.registerCommand("FindNote",         
-            new RunCommand(
+        // Add command to have limelight find note in auto
+        // uses limelight
+        NamedCommands.registerCommand("FindNote",
+            (new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOn("limelight")))
+            .andThen (new RunCommand(
                 () -> m_robotDrive.drive(
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true, true, true)).withTimeout(1)
+                    true, true, true)))
+                    .until(m_shooter::getNoteSensor)
+                    .withTimeout(1)
+            .andThen(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))
         );
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -122,8 +127,8 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true, true, rightStick.getAsBoolean()),
-                m_robotDrive));
-
+                m_robotDrive)
+        );
     }
 
     private void configureButtonBindings() {
@@ -146,9 +151,14 @@ public class RobotContainer {
         startButton.onTrue(Commands.runOnce(() -> m_robotDrive.fixHeading()));
 
         // Purge the shooter
-        backButton.whileTrue(new InstantCommand(() -> m_shooter.shooterREV()))
+        backButton.whileTrue(new InstantCommand(() -> m_shooter.shooterREV())
+            .andThen(new InstantCommand(() -> m_shooter.intakeREV())))
             .onFalse(new InstantCommand(() -> m_shooter.shooterOFF())
         );
+
+        // Use right stick for limelight activation
+        rightStick.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOn("limelight")))
+        .onFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
 
         // Limit switch for detecting notes through intake
         // Returns true if no note seen
