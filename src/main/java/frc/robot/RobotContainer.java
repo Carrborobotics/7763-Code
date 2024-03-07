@@ -111,7 +111,7 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true, true, true)))
                     .until(m_shooter::getInvNoteSensor)
-                    .withTimeout(1)
+                    .withTimeout(.75)
             .andThen(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))
         );
 

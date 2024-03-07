@@ -68,8 +68,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
   // Setup limelight scaling to be on shuffleboard ( normalized )
-  private double m_speedScaler = 1.5;
-  private double m_rotScaler = 5;
+  private double m_speedScaler = 2;
+  private double m_rotScaler = 1.8;
 
   private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
 
@@ -230,7 +230,7 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedCommanded;
     double ySpeedCommanded;
     if (LimelightHelpers.getTV("limelight") && useVision) {
-      ySpeed = limelightRangeProp();
+      xSpeed = limelightRangeProp();
       rot = limelightAimProp();
       fieldRelative = false;
       rateLimit = false;
@@ -342,7 +342,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void fixHeading() {
-    m_gyro.setAngleAdjustment(90);
+    m_gyro.setAngleAdjustment(180);
     m_gyro.reset();
   }
 
