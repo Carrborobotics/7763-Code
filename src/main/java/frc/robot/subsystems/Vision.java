@@ -6,15 +6,21 @@ import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase{
     private final PhotonCamera m_camera;
+    private ShuffleboardTab tabSelected = Shuffleboard.getTab("Vision");
+
 
     public Vision() {
-        m_camera = new PhotonCamera("aprilcam");
+        m_camera = new PhotonCamera("photonvision");
+
     }
 
     public boolean hasTarget(){
@@ -64,12 +70,13 @@ public class Vision extends SubsystemBase{
                 VisionConstants.kCamPitch,
                 Units.degreesToRadians(target.getPitch())
             );
-            SmartDashboard.putNumber("April Yaw", target.getYaw());
-            SmartDashboard.putNumber("April Area", target.getArea());
-            SmartDashboard.putNumber("April Skew", target.getSkew());
-            SmartDashboard.putNumber("April Range", range);
-            SmartDashboard.putNumber("April ID", Double.valueOf(targetID()));
-            SmartDashboard.putBoolean("Amp Target", goodTarget(targetID()));
+            Shuffleboard.getTab("Vision").add("April tag Targetted", hasTarget());
+            Shuffleboard.getTab("Vision").add("April Yaw", getTarget().getYaw());
+            Shuffleboard.getTab("Vision").add("April Area", getTarget().getArea());
+            Shuffleboard.getTab("Vision").add("April Skew", getTarget().getSkew());
+            Shuffleboard.getTab("Vision").add("April Range", range);
+            Shuffleboard.getTab("Vision").add("April ID", Double.valueOf(targetID()));
+            Shuffleboard.getTab("Vision").add("Amp Target", goodTarget(targetID()));
         }
     }
 }
