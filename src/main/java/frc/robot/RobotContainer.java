@@ -12,6 +12,7 @@ import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -83,14 +84,10 @@ public class RobotContainer {
 
     private GenericEntry amp_speed = tabSelected
         .add("Amp Speed Scale", m_ampSpeed)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
     
     private GenericEntry speaker_speed = tabSelected
         .add("Speaker Speed Scaler", m_speakerSpeed)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
 
     private GenericEntry camera_rotation = tabSelected
@@ -141,6 +138,7 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+        //SmartDashboard.putNumber("Voltage", DriverStation.get);
 
         configureButtonBindings();
          

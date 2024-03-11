@@ -6,7 +6,7 @@ import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
@@ -15,11 +15,12 @@ public class Vision extends SubsystemBase{
 
     public Vision() {
         m_camera = new PhotonCamera("photonvision");
-
+        m_camera.setPipelineIndex(0);
     }
 
     public boolean hasTarget(){
         return m_camera.getLatestResult().hasTargets();
+
         //return (m_camera.getLatestResult() != null) ? m_camera.getLatestResult().hasTargets() : false;
     }
 
@@ -59,6 +60,7 @@ public class Vision extends SubsystemBase{
     @Override
     public void periodic(){
         var result = m_camera.getLatestResult();
+        SmartDashboard.putBoolean("April Tag", result.hasTargets());
         if (result.hasTargets()){
             PhotonTrackedTarget target = result.getBestTarget();
             double range = PhotonUtils.calculateDistanceToTargetMeters(VisionConstants.kCamHeight, 
@@ -66,13 +68,12 @@ public class Vision extends SubsystemBase{
                 VisionConstants.kCamPitch,
                 Units.degreesToRadians(target.getPitch())
             );
-            Shuffleboard.getTab("Vision").add("April tag Targetted", result.hasTargets());
-            Shuffleboard.getTab("Vision").add("April Yaw", getTarget().getYaw());
-            Shuffleboard.getTab("Vision").add("April Area", getTarget().getArea());
-            Shuffleboard.getTab("Vision").add("April Skew", getTarget().getSkew());
-            Shuffleboard.getTab("Vision").add("April Range", range);
-            Shuffleboard.getTab("Vision").add("April ID", Double.valueOf(targetID()));
-            Shuffleboard.getTab("Vision").add("Amp Target", goodTarget(targetID()));
+            SmartDashboard.putNumber("April Yaw", getTarget().getYaw());
+            SmartDashboard.putNumber("April Area", getTarget().getArea());
+            SmartDashboard.putNumber("April Skew", getTarget().getSkew());
+            SmartDashboard.putNumber("April Range", range);
+            SmartDashboard.putNumber("April ID", Double.valueOf(targetID()));
+            SmartDashboard.putBoolean("Amp Target", goodTarget(targetID()));
         }
     }
 }

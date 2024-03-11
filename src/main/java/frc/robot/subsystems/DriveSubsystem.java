@@ -14,6 +14,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+
 import com.kauailabs.navx.frc.AHRS;
 import java.util.Map;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -74,15 +77,11 @@ public class DriveSubsystem extends SubsystemBase {
   private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
 
   private GenericEntry ll_speed_scale = tabSelected
-    .add("LL Speed Scaler", m_speedScaler)
-    .withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 5))
+    .add("Limelight Speed Scaler", m_speedScaler)
     .getEntry();
  
   private GenericEntry ll_rot_scale = tabSelected
-    .add("LL Rotation Scaler", m_rotScaler)
-    .withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 10))
+    .add("Limelight Rotation Scaler", m_rotScaler)
     .getEntry();
 
   // Odometry class for tracking robot pose
@@ -170,9 +169,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Heading", getHeading());
     SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
     SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
-    SmartDashboard.putBoolean("Targetted", LimelightHelpers.getTV("limelight"));
+    SmartDashboard.putBoolean("Note Targetted", LimelightHelpers.getTV("limelight"));
   }
-
+  
   /**
    * Returns the currently-estimated pose of the robot.
    *
