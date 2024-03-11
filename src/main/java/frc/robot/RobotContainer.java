@@ -7,6 +7,11 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import java.util.Map;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
@@ -88,6 +93,8 @@ public class RobotContainer {
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
 
+        PhotonCamera camera = new PhotonCamera("aprilcam");
+
         // Register Named Commands
 
         // For legacy autos
@@ -117,7 +124,15 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+        SmartDashboard.putBoolean("Has AprilTag", camera.getLatestResult().hasTargets());
 
+        var result = camera.getLatestResult();
+        if (result.hasTargets()) {
+            PhotonTrackedTarget target = result.getBestTarget();
+            SmartDashboard.putNumber("April Yaw", target.getYaw());
+            SmartDashboard.putNumber("April Area", target.getArea());
+            SmartDashboard.putNumber("April Skew", target.getSkew());
+        }
         configureButtonBindings();
          
         m_robotDrive.setDefaultCommand(
@@ -169,7 +184,7 @@ public class RobotContainer {
     }
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
-            .andThen(new WaitCommand(0.3))
+            .andThen(new WaitCommand(1))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
             .andThen(new WaitCommand(1.5))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
@@ -194,4 +209,6 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
+
+    
 }

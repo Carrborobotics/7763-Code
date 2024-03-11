@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2488731088056972,
-      "y": 5.553600421791921
+      "x": 1.3005404928188775,
+      "y": 5.531335051274091
     },
     "rotation": 180.0
   },
@@ -11,6 +11,18 @@
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shooterON"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -39,12 +51,6 @@
           "type": "named",
           "data": {
             "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Speaker 2 - Close 2"
           }
         },
         {
