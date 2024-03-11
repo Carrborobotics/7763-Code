@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -40,7 +39,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // should be 0.125 for amp and 1 for speaker 
     public void shooterON(double inputSpeed){
         shooterLeft.set(inputSpeed);
-    shooterLeft.setIdleMode(IdleMode.kBrake);
         shooterRight.set(-inputSpeed);
     }
 

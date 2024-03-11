@@ -8,10 +8,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import java.util.Map;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,8 +27,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.Vision;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -57,6 +57,7 @@ public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+    private final Vision m_vision = new Vision();
 
     // Define the controller being used
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -75,6 +76,8 @@ public class RobotContainer {
 
     private double m_ampSpeed = ShooterConstants.kShooterAmpSpeed;
     private double m_speakerSpeed = ShooterConstants.kShooterSpeakerSpeed;
+    private double m_cameraAim = VisionConstants.kCameraAimScaler;
+    private double m_cameraRange = VisionConstants.kCameraRangeScaler;
 
     private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
 
@@ -89,11 +92,17 @@ public class RobotContainer {
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
+
+    private GenericEntry camera_rotation = tabSelected
+        .add("Camera Aim Scaler", m_cameraAim)
+        .getEntry();
+
+    private GenericEntry camera_speed = tabSelected
+        .add("Camera Speed Scaler", m_cameraRange)
+        .getEntry();
     
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
-
-        PhotonCamera camera = new PhotonCamera("aprilcam");
 
         // Register Named Commands
 
@@ -122,17 +131,17 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))
         );
 
+        // Add commend to target in on thd april tag 
+        // TODO: add the slow down and shoot once dialed in (pathplanner to handle?)
+        NamedCommands.registerCommand("TargetAmp", 
+            (new RunCommand(() -> targetAmp()))
+            .until(m_vision::targetAreaReached).withTimeout(3)
+        );
+        NamedCommands.registerCommand("ShootAmp", shootAmp());
+
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
-        SmartDashboard.putBoolean("Has AprilTag", camera.getLatestResult().hasTargets());
 
-        var result = camera.getLatestResult();
-        if (result.hasTargets()) {
-            PhotonTrackedTarget target = result.getBestTarget();
-            SmartDashboard.putNumber("April Yaw", target.getYaw());
-            SmartDashboard.putNumber("April Area", target.getArea());
-            SmartDashboard.putNumber("April Skew", target.getSkew());
-        }
         configureButtonBindings();
          
         m_robotDrive.setDefaultCommand(
@@ -173,7 +182,14 @@ public class RobotContainer {
 
         // Use right stick for limelight activation
         rightStick.onTrue(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOn("limelight")))
-        .onFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+            .onFalse(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight"))
+        );
+
+        // Left stick should head to april tags
+        leftStick.whileTrue(targetAmp())
+            .onTrue(new InstantCommand(() -> m_vision.setLED(VisionLEDMode.kOn)))
+            .onFalse(new InstantCommand(() -> m_vision.setLED(VisionLEDMode.kOff))
+        );
 
         // Limit switch for detecting notes through intake
         // Returns true if no note seen
@@ -182,11 +198,14 @@ public class RobotContainer {
         // Turn off intake and spool up shooter when note is sensed
         noteSensor.onFalse(noteSensed());
     }
+
+    // Commands used for buttons and auto
+
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
-            .andThen(new WaitCommand(1))
+            .andThen(new WaitCommand(0.25))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
-            .andThen(new WaitCommand(1.5))
+            .andThen(new WaitCommand(0.5))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
         );
@@ -206,6 +225,41 @@ public class RobotContainer {
         );
     }
 
+    private Command targetAmp() {
+        return new RunCommand(() -> m_robotDrive.drive(
+                    rpiRangeProp(),
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                    rpiAimProp(),
+                    false, false, false), m_robotDrive);
+    }
+
+    // Aim to april tag if valid, otherwise use controller input
+
+    private double rpiAimProp() {
+        double kP = camera_rotation.getDouble(0.1); // 0.035
+        if(m_vision.hasTarget() && (m_vision.targetID() == 5 || m_vision.targetID() == 6)){ 
+            PhotonTrackedTarget target = m_vision.getTarget();
+            double targetAngularVel = m_vision.getYaw(target) * kP;
+            targetAngularVel *= -1;
+            SmartDashboard.putNumber("Camera Angular Vel", targetAngularVel);
+            return targetAngularVel;
+        } 
+        return -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband);
+    }
+  
+    private double rpiRangeProp() {
+        double kP = camera_speed.getDouble(0.1); // 0.1
+        if(m_vision.hasTarget() && (m_vision.targetID() == 5 || m_vision.targetID() == 6)){
+            PhotonTrackedTarget target = m_vision.getTarget();
+            double targetForwardSpeed = m_vision.getArea(target) * kP;
+            targetForwardSpeed *= -1;
+            SmartDashboard.putNumber("Camera Forward Speed", targetForwardSpeed);
+            return targetForwardSpeed; 
+        }
+        return -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband);
+    }
+
+    // Get auto command from shuffleboard chooser
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
