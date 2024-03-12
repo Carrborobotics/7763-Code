@@ -62,7 +62,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker 2 - Close 3"
+            "pathName": "FarLeftFromCenter"
           }
         },
         {
@@ -86,7 +86,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "FarLeft"
+            "pathName": "Speaker 2 - Close 3"
           }
         },
         {
@@ -98,7 +98,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ComeBack"
+            "pathName": "Center Speaker"
           }
         },
         {

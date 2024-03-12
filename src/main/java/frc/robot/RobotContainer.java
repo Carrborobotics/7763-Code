@@ -203,9 +203,14 @@ public class RobotContainer {
 
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
-            .andThen(new WaitCommand(0.25))
-            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
             .andThen(new WaitCommand(0.5))
+            .andThen((new RunCommand(() -> m_robotDrive.drive(
+                    0.35,
+                    0,
+                    0,
+                    false, false, false), m_robotDrive)))
+            .raceWith(((new WaitCommand(3)).until(m_vision::targetAreaReached)).andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))))
+            .andThen(new WaitCommand(0.3))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
         );
@@ -228,8 +233,8 @@ public class RobotContainer {
     private Command targetAmp() {
         return new RunCommand(() -> m_robotDrive.drive(
                     rpiRangeProp(),
-                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     rpiAimProp(),
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     false, false, false), m_robotDrive);
     }
 
@@ -237,24 +242,28 @@ public class RobotContainer {
 
     private double rpiAimProp() {
         double kP = camera_rotation.getDouble(0.1); // 0.035
-        if(m_vision.hasTarget() && (m_vision.targetID() == 5 || m_vision.targetID() == 6)){ 
+        if(m_vision.hasTarget()) {
             PhotonTrackedTarget target = m_vision.getTarget();
-            double targetAngularVel = m_vision.getYaw(target) * kP;
-            targetAngularVel *= -1;
-            SmartDashboard.putNumber("Camera Angular Vel", targetAngularVel);
-            return targetAngularVel;
-        } 
-        return -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband);
+            if (m_vision.targetID(target) == 5 || m_vision.targetID(target) == 6){ 
+                double targetAngularVel = m_vision.getYaw(target) * kP;
+                targetAngularVel *= -1;
+                SmartDashboard.putNumber("Camera Angular Vel", targetAngularVel);
+                return targetAngularVel;
+            }
+        }
+        return -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband);
     }
   
     private double rpiRangeProp() {
         double kP = camera_speed.getDouble(0.1); // 0.1
-        if(m_vision.hasTarget() && (m_vision.targetID() == 5 || m_vision.targetID() == 6)){
+        if(m_vision.hasTarget()) {
             PhotonTrackedTarget target = m_vision.getTarget();
-            double targetForwardSpeed = m_vision.getArea(target) * kP;
-            targetForwardSpeed *= -1;
-            SmartDashboard.putNumber("Camera Forward Speed", targetForwardSpeed);
-            return targetForwardSpeed; 
+            if(m_vision.targetID(target) == 5 || m_vision.targetID(target) == 6){
+                double targetForwardSpeed = 1/m_vision.getArea(target) * kP;
+                targetForwardSpeed *= 1;
+                SmartDashboard.putNumber("Camera Forward Speed", targetForwardSpeed);
+                return targetForwardSpeed; 
+            }
         }
         return -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband);
     }

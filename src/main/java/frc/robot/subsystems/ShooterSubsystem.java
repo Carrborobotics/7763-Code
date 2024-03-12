@@ -34,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
 
         // Start up with the intake ON
-        intakeON(1);
+        //intakeON(1);
     }
     // should be 0.125 for amp and 1 for speaker 
     public void shooterON(double inputSpeed){

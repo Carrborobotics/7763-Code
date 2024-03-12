@@ -34,10 +34,10 @@ public final class Constants {
     public static final int kintake2Id = 15;
     public static final int kNoteSensorId = 7;
 
-    public static final double kShooterAmpSpeed = 0.13;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
+    public static final double kShooterAmpSpeed = 0.12;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
     public static final double kIntakeAmpSpeed = 0.8;      // first test passed at 0.75
-    public static final double kShooterSpeakerSpeed = 1;
-    public static final double kIntakeSpeakerSpeed = 1.0;
+    public static final double kShooterSpeakerSpeed = 0.5;
+    public static final double kIntakeSpeakerSpeed = 1;
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
@@ -70,12 +70,12 @@ public final class Constants {
     public static final int kFrontLeftDrivingCanId = 2; //= 3;
     public static final int kRearLeftDrivingCanId = 5; // = 2;
     public static final int kFrontRightDrivingCanId = 3; // = 4;
-    public static final int kRearRightDrivingCanId = 4; // = 5;
+    public static final int kRearRightDrivingCanId = 8; // = 5;
 
     public static final int kFrontLeftTurningCanId = 6; // = 7;
     public static final int kRearLeftTurningCanId = 9; // = 6;
     public static final int kFrontRightTurningCanId = 7; // = 8;
-    public static final int kRearRightTurningCanId = 8; // = 9;
+    public static final int kRearRightTurningCanId = 4; // = 9;
 
     public static final boolean kGyroReversed = false;
   }
@@ -137,9 +137,9 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final double kCameraRangeScaler = 0.1;
-    public static final double kCameraAimScaler = 0.1;
-    public static final double kCameraTargetArea = 4;
+    public static final double kCameraRangeScaler = 0.05;
+    public static final double kCameraAimScaler = 0.05;
+    public static final double kCameraTargetArea = 1.45;
     public static final double kCamHeight = 0.41;
     public static final double kTagHeight = 1.27;
     public static final double kCamPitch = Math.PI / 4; // ~45 degrees (pi/4 rad)

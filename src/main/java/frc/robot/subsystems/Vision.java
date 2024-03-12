@@ -22,12 +22,16 @@ public class Vision extends SubsystemBase{
         return m_camera.getLatestResult().hasTargets();
     }
 
+    public boolean noTarget(){
+        return !(m_camera.getLatestResult().hasTargets());
+    }
+
     public PhotonTrackedTarget getTarget(){
         return (hasTarget()) ? (m_camera.getLatestResult().getBestTarget()) : null;
     }
 
-    public int targetID(){
-        return (hasTarget()) ? (getTarget().getFiducialId()) : 0;
+    public int targetID(PhotonTrackedTarget target){
+        return target.getFiducialId();
     }
 
     public double getYaw(PhotonTrackedTarget target){
@@ -39,7 +43,10 @@ public class Vision extends SubsystemBase{
     }
 
     public boolean targetAreaReached() {
-        return (getArea(getTarget()) < VisionConstants.kCameraTargetArea) ? true : false; // need to figure out the area to slow down at
+        if (m_camera.getLatestResult().getBestTarget() != null){
+            return (m_camera.getLatestResult().getBestTarget().getArea() > VisionConstants.kCameraTargetArea) ? true : false; // need to figure out the area to slow down at
+        }
+        return false;
     }
 
     public double getSkew(PhotonTrackedTarget target){
@@ -66,12 +73,11 @@ public class Vision extends SubsystemBase{
                 VisionConstants.kCamPitch,
                 Units.degreesToRadians(target.getPitch())
             );
-            SmartDashboard.putNumber("April Yaw", getTarget().getYaw());
-            SmartDashboard.putNumber("April Area", getTarget().getArea());
-            SmartDashboard.putNumber("April Skew", getTarget().getSkew());
+            SmartDashboard.putNumber("April Yaw", result.getBestTarget().getYaw());
+            SmartDashboard.putNumber("April Area", result.getBestTarget().getArea());
+            SmartDashboard.putNumber("April Skew", result.getBestTarget().getSkew());
             SmartDashboard.putNumber("April Range", range);
-            SmartDashboard.putNumber("April ID", Double.valueOf(targetID()));
-            SmartDashboard.putBoolean("Amp Target", goodTarget(targetID()));
+            SmartDashboard.putNumber("April ID", Double.valueOf(targetID(target)));
         }
     }
 }
