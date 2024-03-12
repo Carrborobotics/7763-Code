@@ -20,8 +20,6 @@ public class Vision extends SubsystemBase{
 
     public boolean hasTarget(){
         return m_camera.getLatestResult().hasTargets();
-
-        //return (m_camera.getLatestResult() != null) ? m_camera.getLatestResult().hasTargets() : false;
     }
 
     public PhotonTrackedTarget getTarget(){

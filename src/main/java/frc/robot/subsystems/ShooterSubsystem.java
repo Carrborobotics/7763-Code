@@ -82,5 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // Handle checking the note sensor to see if the intake is loaded
         // noteSensor.get() is True if there is not a note
         SmartDashboard.putBoolean("Note Sensor", noteSensor.get());
-   }
+        SmartDashboard.putNumber("Shooter Left Voltage", shooterLeft.getBusVoltage());
+        SmartDashboard.putNumber("Shooter Right Voltage", shooterRight.getBusVoltage());
+    }
 }
