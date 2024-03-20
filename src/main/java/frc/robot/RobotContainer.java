@@ -205,12 +205,13 @@ public class RobotContainer {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
             .andThen(new WaitCommand(0.5))
             .andThen((new RunCommand(() -> m_robotDrive.drive(
-                    0.35,
+                    0.375,
                     0,
-                    0,
+                    rpiAimProp(),
                     false, false, false), m_robotDrive)))
-            .raceWith(((new WaitCommand(3)).until(m_vision::targetAreaReached)).andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))))
-            .andThen(new WaitCommand(0.3))
+            .raceWith(((new WaitCommand(3))).until(m_vision::targetAreaReached))
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
+            .andThen(new WaitCommand(0.75))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
         );
@@ -225,7 +226,7 @@ public class RobotContainer {
     private Command shootSpeaker() {
         return new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
             .andThen(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))))
-            .andThen(new WaitCommand(0.1))
+            .andThen(new WaitCommand(0.3))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF())
         );
     }
@@ -262,7 +263,7 @@ public class RobotContainer {
                 double targetForwardSpeed = 1/m_vision.getArea(target) * kP;
                 targetForwardSpeed *= 1;
                 SmartDashboard.putNumber("Camera Forward Speed", targetForwardSpeed);
-                return targetForwardSpeed; 
+                return targetForwardSpeed*12; 
             }
         }
         return -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband);

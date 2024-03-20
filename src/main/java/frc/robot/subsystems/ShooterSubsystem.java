@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -16,7 +17,7 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
 
     private CANSparkMax shooterLeft;
-    private CANSparkMax shooterRight;
+    private CANSparkFlex shooterRight;
     private CANSparkMax intake1;
     private CANSparkMax intake2;
     private DigitalInput noteSensor;
@@ -25,7 +26,7 @@ public class ShooterSubsystem extends SubsystemBase {
       public ShooterSubsystem() {
 
         shooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
-        shooterRight = new CANSparkMax(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
+        shooterRight = new CANSparkFlex(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
         shooterLeft.enableVoltageCompensation(12);
         shooterRight.enableVoltageCompensation(12);
         // shooterRight.setOpenLoopRampRate(0.5);
@@ -39,7 +40,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // should be 0.125 for amp and 1 for speaker 
     public void shooterON(double inputSpeed){
         shooterLeft.set(inputSpeed);
-        shooterRight.set(-inputSpeed);
+        shooterRight.set(inputSpeed);
     }
 
     public void shooterREV(){
