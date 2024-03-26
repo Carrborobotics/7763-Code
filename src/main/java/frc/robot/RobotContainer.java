@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Vision;
@@ -58,6 +59,7 @@ public class RobotContainer {
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ShooterSubsystem m_shooter = new ShooterSubsystem();
     private final Vision m_vision = new Vision();
+    private final ArmSubsystem m_arm = new ArmSubsystem();
 
     // Define the controller being used
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -204,15 +206,11 @@ public class RobotContainer {
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
             .andThen(new WaitCommand(0.5))
-            .andThen((new RunCommand(() -> m_robotDrive.drive(
-                    0.375,
-                    0,
-                    rpiAimProp(),
-                    false, false, false), m_robotDrive)))
-            .raceWith(((new WaitCommand(3))).until(m_vision::targetAreaReached))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
+            .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
             .andThen(new WaitCommand(0.75))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
+            .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
         );
     }

@@ -145,6 +145,11 @@ public final class Constants {
     public static final double kCamPitch = Math.PI / 4; // ~45 degrees (pi/4 rad)
   }
 
+  public static final class ArmConstants {
+    public static final int kArmMotorLeftCanId = 16;
+    public static final int kArmMotorRightCanId = 17;
+  }
+
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 5;

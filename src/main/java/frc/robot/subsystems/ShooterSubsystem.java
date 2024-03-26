@@ -23,7 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private DigitalInput noteSensor;
 
 
-      public ShooterSubsystem() {
+    public ShooterSubsystem() {
 
         shooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
         shooterRight = new CANSparkFlex(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
