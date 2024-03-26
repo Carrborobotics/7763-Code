@@ -72,5 +72,4 @@ public class Limelight extends SubsystemBase{
     public void takeSnap() {
         m_lime.getEntry("snapshot").setNumber(1.0);
     }
-
 }

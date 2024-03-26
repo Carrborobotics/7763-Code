@@ -1,13 +1,18 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ModuleConstants;
 
 public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax armMotorLeft;
@@ -15,11 +20,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     private SparkPIDController m_leftPidController;
     private SparkPIDController m_RightPidController;
+    //private DutyCycleEncoder m_dutyCycleEncoder;
 
-    private RelativeEncoder m_leftEncoder;
-    private RelativeEncoder m_rightEncoder;
+    private final AbsoluteEncoder m_armEncoder;
+    //private final DutyCycleEncoder m_armEncoder = new DutyCycleEncoder(0);
 
     public double kP, kI, kD, kIz, kFF, kMax, kMin, kRot;
+    public double  m_startpos;
 
     public ArmSubsystem() {
         
@@ -30,18 +37,31 @@ public class ArmSubsystem extends SubsystemBase {
         // Return the encoder to default state
         armMotorLeft.restoreFactoryDefaults();
         armMotorRight.restoreFactoryDefaults();
+        armMotorRight.follow(armMotorLeft);
 
         // Create PID controllers
         m_leftPidController = armMotorLeft.getPIDController();
         m_RightPidController = armMotorRight.getPIDController();
 
+        m_armEncoder = armMotorLeft.getAbsoluteEncoder(Type.kDutyCycle);
+
+        m_armEncoder.setZeroOffset(0);
+
+        m_armEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
+        //m_armEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
+
+        m_leftPidController.setFeedbackDevice(m_armEncoder);
+        m_leftPidController.setPositionPIDWrappingEnabled(true);
+        m_leftPidController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
+        m_leftPidController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
+
         // Set defaults for PID control
-        kP = 0.1;
-        kI = 1e-4;
+        kP = 1;
+        kI = 0;//1e-4;
         kD = 0;
-        kMax = 0.5;
-        kMin = -0.5;
-        kRot = 0.5;
+        kMax = 1;
+        kMin = -1;
+        kRot = 0.3;
 
         m_leftPidController.setP(kP);
         m_leftPidController.setI(kI);
@@ -59,16 +79,24 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("arm/max output", kMax);
         SmartDashboard.putNumber("arm/min output", kMin);
         SmartDashboard.putNumber("arm/rotations", kRot);
+        
+        // Keep when browning out
+        armMotorLeft.burnFlash();
+        armMotorRight.burnFlash();
+        m_leftPidController.setReference(0, CANSparkMax.ControlType.kPosition);
+
+        m_startpos = m_armEncoder.getPosition();
+        SmartDashboard.putNumber("start pos", m_startpos);
     }
 
     public void rotateArmToAmp() {
-        m_leftPidController.setReference(kRot, CANSparkMax.ControlType.kPosition);
-        m_RightPidController.setReference(kRot, CANSparkMax.ControlType.kPosition);
+        m_leftPidController.setReference(Math.PI, CANSparkMax.ControlType.kPosition);
+        m_RightPidController.setReference(m_startpos + Math.PI, CANSparkMax.ControlType.kPosition);
     }
 
      public void rotateArmToBot() {
-        m_leftPidController.setReference(-kRot, CANSparkMax.ControlType.kPosition);
-        m_RightPidController.setReference(-kRot, CANSparkMax.ControlType.kPosition);
+        m_leftPidController.setReference(0, CANSparkMax.ControlType.kPosition);
+        m_RightPidController.setReference(0, CANSparkMax.ControlType.kPosition);
     }   
 
     @Override
@@ -110,8 +138,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         if (rot != kRot) { kRot = rot; }
 
-        SmartDashboard.putNumber("arm/left position", m_leftEncoder.getPosition());
-        SmartDashboard.putNumber("arm/right position", m_rightEncoder.getPosition());
+        SmartDashboard.putNumber("arm/position", m_armEncoder.getPosition());
     }
 
 }
