@@ -15,7 +15,6 @@ public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax armMotorRight;  
 
     private SparkPIDController m_leftPidController;
-    private SparkPIDController m_RightPidController;
 
     private SparkAbsoluteEncoder m_armEncoder;
 
@@ -37,7 +36,6 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Create PID controllers
         m_leftPidController = armMotorLeft.getPIDController();
-        m_RightPidController = armMotorRight.getPIDController();
 
         // Setup throughbore encoder
         m_armEncoder = armMotorLeft.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -67,11 +65,6 @@ public class ArmSubsystem extends SubsystemBase {
         m_leftPidController.setD(kD);
         m_leftPidController.setOutputRange(kMin, kMax);
 
-        m_RightPidController.setP(kP);
-        m_RightPidController.setI(kI);
-        m_RightPidController.setD(kD);
-        m_RightPidController.setOutputRange(kMin, kMax);
-
         SmartDashboard.putNumber("arm/p gain", kP);
         SmartDashboard.putNumber("arm/i gain", kI);
         SmartDashboard.putNumber("arm/d gain", kD);
@@ -80,8 +73,10 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("arm/zero offset", Constants.ArmConstants.kZeroOffset);
         SmartDashboard.putNumber("arm/rotations", kRot);
         
+        // Try to start at 0
         m_leftPidController.setReference(0, CANSparkMax.ControlType.kPosition);
 
+        // Record start position
         m_startpos = m_armEncoder.getPosition();
         SmartDashboard.putNumber("arm/start pos", m_startpos);
     }

@@ -38,6 +38,15 @@ public final class Constants {
     public static final double kIntakeAmpSpeed = 0.7;      // first test passed at 0.75
     public static final double kShooterSpeakerSpeed = 0.60;
     public static final double kIntakeSpeakerSpeed = 1;
+
+    public static final double kPshooter = 6e-5;
+    public static final double kIshooter = 0;
+    public static final double kDshooter = 0;
+    public static final double kFFshooter = 0.000015;
+    public static final double kMaxShooter = 1;
+    public static final double kMinShooter = -1;
+
+
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
@@ -170,5 +179,9 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static final class VortexMotorConstants {
+    public static final double kFreeSpeedRpm = 6784;
   }
 }

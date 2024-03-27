@@ -134,7 +134,6 @@ public class RobotContainer {
         );
 
         // Add commend to target in on thd april tag 
-        // TODO: add the slow down and shoot once dialed in (pathplanner to handle?)
         NamedCommands.registerCommand("TargetAmp", 
             (new RunCommand(() -> targetAmp()))
             .until(m_vision::targetAreaReached).withTimeout(3)
@@ -188,10 +187,10 @@ public class RobotContainer {
         );
 
         // Left stick should head to april tags
-        leftStick.whileTrue(targetAmp())
-            .onTrue(new InstantCommand(() -> m_vision.setLED(VisionLEDMode.kOn)))
-            .onFalse(new InstantCommand(() -> m_vision.setLED(VisionLEDMode.kOff))
-        );
+        //leftStick.whileTrue(targetAmp())
+        //    .onTrue(new InstantCommand(() -> m_vision.setLED(VisionLEDMode.kOn)))
+        //    .onFalse(new InstantCommand(() -> m_vision.setLED(VisionLEDMode.kOff))
+        //);
 
         // Limit switch for detecting notes through intake
         // Returns true if no note seen
@@ -205,7 +204,8 @@ public class RobotContainer {
 
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
-            .andThen(new WaitCommand(0.5))
+            //.andThen(new WaitCommand(0.5))
+            .until(m_shooter::isShooterReady).withTimeout(0.5)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
             .andThen(new WaitCommand(0.75))
