@@ -83,7 +83,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // NOTE: vortex has inverted speed to neo
 
     public void shooterON(double inputSpeed){
-        shooterSpeedReq = inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
+        shooterSpeedReq = inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm;
         m_leftPidController.setReference(inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm, CANSparkMax.ControlType.kVelocity);
         m_rightPidController.setReference(inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm, CANSparkFlex.ControlType.kVelocity);    
     }
