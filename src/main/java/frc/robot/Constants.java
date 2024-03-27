@@ -148,6 +148,9 @@ public final class Constants {
   public static final class ArmConstants {
     public static final int kArmMotorLeftCanId = 16;
     public static final int kArmMotorRightCanId = 17;
+    public static final int kArmCountsPerRev = 8192; // from rev doc on throughbore
+    public static final double kArmSmackScaler = 0.8; // percent of a semi-circle to smack with
+    public static final double kZeroOffset = 0.0;
   }
 
   public static final class AutoConstants {
