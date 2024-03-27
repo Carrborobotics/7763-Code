@@ -222,8 +222,9 @@ public class RobotContainer {
     }
 
     private Command shootSpeaker() {
-        return new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
-            .andThen(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))))
+        return new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1)))
+            .until(m_shooter::isShooterReady).withTimeout(0.5)
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)))
             .andThen(new WaitCommand(0.3))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF())
         );
