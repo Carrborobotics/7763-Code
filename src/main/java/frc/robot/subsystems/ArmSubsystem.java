@@ -37,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
         // Return the encoder to default state
         armMotorLeft.restoreFactoryDefaults();
         armMotorRight.restoreFactoryDefaults();
-        armMotorRight.follow(armMotorLeft);
+        //armMotorRight.follow(armMotorLeft);
 
         // Create PID controllers
         m_leftPidController = armMotorLeft.getPIDController();
