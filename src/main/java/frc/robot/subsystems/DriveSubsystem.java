@@ -68,7 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Setup limelight scaling to be on shuffleboard ( normalized )
   private double m_speedScaler = 2;
-  private double m_rotScaler = 2.1;
+  private double m_rotScaler = 4;
 
   private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
 

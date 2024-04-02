@@ -13,6 +13,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -207,8 +208,9 @@ public class RobotContainer {
             //.andThen(new WaitCommand(0.5))
             .until(m_shooter::isShooterReady).withTimeout(0.5)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
+            .andThen(new WaitCommand(0.5)) // Delay to SMACK
             .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
-            .andThen(new WaitCommand(0.75))
+            .andThen(new WaitCommand(.5))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))
@@ -217,7 +219,11 @@ public class RobotContainer {
 
     private Command noteSensed(){
         return (new InstantCommand(() -> m_shooter.intakeOFF())
+            .alongWith(Commands.runOnce(() -> m_driverController.setRumble(RumbleType.kBothRumble, 2)))
             .andThen(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))))
+            .andThen(new WaitCommand(0.5))
+            .andThen(Commands.runOnce(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)))
+
         );
     }
 
@@ -225,7 +231,7 @@ public class RobotContainer {
         return new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1)))
             .until(m_shooter::isShooterReady).withTimeout(0.5)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)))
-            .andThen(new WaitCommand(0.3))
+            .andThen(new WaitCommand(0.75))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF())
         );
     }

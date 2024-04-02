@@ -38,6 +38,15 @@ public final class Constants {
     public static final double kIntakeAmpSpeed = 0.7;      // first test passed at 0.75
     public static final double kShooterSpeakerSpeed = 0.60;
     public static final double kIntakeSpeakerSpeed = 1;
+
+    public static final double kPshooter = 6e-5;
+    public static final double kIshooter = 0;
+    public static final double kDshooter = 0;
+    public static final double kFFshooter = 0.000015;
+    public static final double kMaxShooter = 1;
+    public static final double kMinShooter = -1;
+
+
   }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
@@ -45,8 +54,8 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 6.5; //def: 4.8
     public static final double kMaxAngularSpeed = 1.75 * Math.PI; // radians per second
 
-    public static final double kDirectionSlewRate = 6.0; // radians per second
-    public static final double kMagnitudeSlewRate = 3.6; // percent per second (1 = 100%)
+    public static final double kDirectionSlewRate = 5.0; // radians per second
+    public static final double kMagnitudeSlewRate = 3.0; // percent per second (1 = 100%)
     public static final double kRotationalSlewRate = 15; // percent per second (1 = 100%)
 
     // Chassis configuration
@@ -92,7 +101,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.08;
+    public static final double kWheelDiameterMeters = 0.0724;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 19) / (kDrivingMotorPinionTeeth * 15);
@@ -127,13 +136,13 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 80; // amps
+    public static final int kDrivingMotorCurrentLimit = 65; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.125;
+    public static final double kDriveDeadband = 0.1;
   }
 
   public static final class VisionConstants {
@@ -148,11 +157,15 @@ public final class Constants {
   public static final class ArmConstants {
     public static final int kArmMotorLeftCanId = 16;
     public static final int kArmMotorRightCanId = 17;
+    public static final int kArmCountsPerRev = 8192; // from rev doc on throughbore
+    public static final double kArmSmackScaler = 4.5;
+    public static final double kZeroOffset = 0.3;
+    public static final double kStartPosition = 1.5;
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 6;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 5;
+    public static final double kMaxSpeedMetersPerSecond = 1; //6
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1; //5
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -167,5 +180,9 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static final class VortexMotorConstants {
+    public static final double kFreeSpeedRpm = 6784;
   }
 }

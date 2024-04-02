@@ -20,7 +20,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.3
           }
         },
         {
@@ -62,7 +62,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Speaker"
+            "pathName": "Center from B1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FarLeftFromCenter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FarLeftToCenter"
           }
         },
         {
@@ -86,7 +110,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Speaker"
+            "pathName": "Center from 2-3"
           }
         },
         {

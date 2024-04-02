@@ -18,7 +18,7 @@ import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private CANSparkMax shooterLeft;
+    private CANSparkFlex shooterLeft;
     private CANSparkFlex shooterRight;
 
     private SparkPIDController m_leftPidController;
@@ -36,7 +36,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
 
-        shooterLeft = new CANSparkMax(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
+        shooterLeft = new CANSparkFlex(Constants.ShooterConstants.kShooterLeftId, MotorType.kBrushless);
         shooterRight = new CANSparkFlex(Constants.ShooterConstants.kShooterRightId, MotorType.kBrushless);
 
         shooterLeft.restoreFactoryDefaults();
@@ -63,6 +63,8 @@ public class ShooterSubsystem extends SubsystemBase {
         
         m_leftEncoder = shooterLeft.getEncoder();
         m_rightEncoder = shooterRight.getEncoder();
+        //m_leftEncoder.setVelocityConversionFactor(Constants.ModuleConstants.kTurningEncoderVelocityFactor);
+        //m_rightEncoder.setVelocityConversionFactor(Constants.ModuleConstants.kTurningEncoderVelocityFactor);
 
         m_leftPidController.setFeedbackDevice(m_leftEncoder);
         m_rightPidController.setFeedbackDevice(m_rightEncoder);
@@ -85,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void shooterON(double inputSpeed){
         shooterSpeedReq = inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm;
         m_leftPidController.setReference(inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm, CANSparkMax.ControlType.kVelocity);
-        m_rightPidController.setReference(inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm, CANSparkFlex.ControlType.kVelocity);    
+        m_rightPidController.setReference(-inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm, CANSparkFlex.ControlType.kVelocity);    
     }
 
     public boolean isShooterReady() {
@@ -94,7 +96,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void shooterREV(){
-        shooterSpeedReq = -1 * Constants.VortexMotorConstants.kFreeSpeedRpm;
+        shooterSpeedReq = -1 * Constants.NeoMotorConstants.kFreeSpeedRpm;
         shooterLeft.set(-1);
         shooterRight.set(-1);
     }
