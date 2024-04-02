@@ -206,9 +206,9 @@ public class RobotContainer {
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))))
             //.andThen(new WaitCommand(0.5))
-            .until(m_shooter::isShooterReady).withTimeout(0.5)
+            .until(m_shooter::isShooterReady).withTimeout(1)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed)))
-            .andThen(new WaitCommand(0.5)) // Delay to SMACK
+            .andThen(new WaitCommand(0.25)) // Delay to SMACK
             .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
             .andThen(new WaitCommand(.5))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
@@ -231,7 +231,7 @@ public class RobotContainer {
         return new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1)))
             .until(m_shooter::isShooterReady).withTimeout(0.5)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)))
-            .andThen(new WaitCommand(0.75))
+            .andThen(new WaitCommand(1.5))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF())
         );
     }

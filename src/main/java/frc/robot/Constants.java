@@ -34,9 +34,9 @@ public final class Constants {
     public static final int kintake2Id = 15;
     public static final int kNoteSensorId = 7;
 
-    public static final double kShooterAmpSpeed = 0.11;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
+    public static final double kShooterAmpSpeed = 0.4;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
     public static final double kIntakeAmpSpeed = 0.7;      // first test passed at 0.75
-    public static final double kShooterSpeakerSpeed = 0.60;
+    public static final double kShooterSpeakerSpeed = 10;
     public static final double kIntakeSpeakerSpeed = 1;
 
     public static final double kPshooter = 6e-5;
@@ -158,7 +158,7 @@ public final class Constants {
     public static final int kArmMotorLeftCanId = 16;
     public static final int kArmMotorRightCanId = 17;
     public static final int kArmCountsPerRev = 8192; // from rev doc on throughbore
-    public static final double kArmSmackScaler = 4.5;
+    public static final double kArmSmackScaler = 4.25;
     public static final double kZeroOffset = 0.3;
     public static final double kStartPosition = 1.5;
   }
