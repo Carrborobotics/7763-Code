@@ -20,13 +20,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.3
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "middle path"
           }
         },
         {
@@ -39,6 +45,54 @@
           "type": "path",
           "data": {
             "pathName": "Center Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "center speaker top"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker 2 - Close 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "center speaker bottom"
           }
         },
         {
@@ -63,54 +117,6 @@
           "type": "path",
           "data": {
             "pathName": "From Stage"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "B1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FindNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Center Speaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Speaker 2 - Close 3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FindNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Center Speaker"
           }
         },
         {

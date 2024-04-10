@@ -14,7 +14,7 @@ public class Vision extends SubsystemBase{
     private final PhotonCamera m_camera;
 
     public Vision() {
-        m_camera = new PhotonCamera("photonvision");
+        m_camera = new PhotonCamera("Elgato_Facecam:_Elgato_Facecam");
         m_camera.setPipelineIndex(0);
     }
 
@@ -44,7 +44,14 @@ public class Vision extends SubsystemBase{
 
     public boolean targetAreaReached() {
         if (m_camera.getLatestResult().getBestTarget() != null){
-            return (m_camera.getLatestResult().getBestTarget().getArea() > VisionConstants.kCameraTargetArea) ? true : false; // need to figure out the area to slow down at
+            if(m_camera.getLatestResult().getBestTarget().getFiducialId() == 4 ||
+                m_camera.getLatestResult().getBestTarget().getFiducialId() == 7){
+                    return (m_camera.getLatestResult().getBestTarget().getArea() > VisionConstants.kCameraSpeakerTargetArea) ? true : false;
+            }
+            if(m_camera.getLatestResult().getBestTarget().getFiducialId() == 5 ||
+                m_camera.getLatestResult().getBestTarget().getFiducialId() == 6){
+                    return (m_camera.getLatestResult().getBestTarget().getArea() > VisionConstants.kCameraAmpTargetArea) ? true : false;
+            }
         }
         return false;
     }
@@ -59,7 +66,7 @@ public class Vision extends SubsystemBase{
 
     public boolean goodTarget(int id){
         // Amp is 5 or 6 depending on red/blue, either is fine for now
-        return (id == 5 || id == 6) ? true : false;
+        return (id == 5 || id == 6) ? true : false; // tag 7, area 0.98, yaw < 1
     }
 
     @Override

@@ -67,8 +67,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
   // Setup limelight scaling to be on shuffleboard ( normalized )
-  private double m_speedScaler = 2;
-  private double m_rotScaler = 4;
+  private double m_speedScaler = 1.5;
+  private double m_rotScaler = 3.3;
 
   private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
 

@@ -30,6 +30,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "middle path"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "FindNote"

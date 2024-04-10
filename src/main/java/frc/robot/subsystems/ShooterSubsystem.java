@@ -10,11 +10,13 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ModuleConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -31,7 +33,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private CANSparkMax intake2;
     
     private DigitalInput noteSensor;
-
+    public DigitalInput shootSensor;
+    public SlewRateLimiter m_rslew;
+    public SlewRateLimiter m_lslew;
     public double shooterSpeedReq;
 
     public ShooterSubsystem() {
@@ -42,9 +46,15 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterLeft.restoreFactoryDefaults();
         shooterRight.restoreFactoryDefaults();
 
-        shooterLeft.enableVoltageCompensation(12);
-        shooterRight.enableVoltageCompensation(12);
+        shooterLeft.enableVoltageCompensation(10);
+        shooterRight.enableVoltageCompensation(10);
         
+        //shooterLeft.setOpenLoopRampRate(1.5);
+        //shooterRight.setOpenLoopRampRate(1.5);
+        shooterLeft.setClosedLoopRampRate(1.5);
+        shooterRight.setClosedLoopRampRate(1.5);
+
+
         m_leftPidController = shooterLeft.getPIDController();
 
         m_leftPidController.setP(Constants.ShooterConstants.kPshooter);
@@ -75,7 +85,12 @@ public class ShooterSubsystem extends SubsystemBase {
         intake1.restoreFactoryDefaults();
         intake2.restoreFactoryDefaults();
 
+        intake1.setSmartCurrentLimit(30);
+
+
+        
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
+        shootSensor = new DigitalInput(Constants.ShooterConstants.kShootSensorId);
 
         shooterSpeedReq = 0;
 
@@ -85,9 +100,12 @@ public class ShooterSubsystem extends SubsystemBase {
     // NOTE: vortex has inverted speed to neo
 
     public void shooterON(double inputSpeed){
-        shooterSpeedReq = inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm;
-        m_leftPidController.setReference(inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm, CANSparkMax.ControlType.kVelocity);
-        m_rightPidController.setReference(-inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm, CANSparkFlex.ControlType.kVelocity);    
+        
+        shooterSpeedReq = (inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm );
+        //shooterLeft.set(inputSpeed);
+        //shooterRight.set(-inputSpeed);
+        m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
+        m_rightPidController.setReference(-shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);    
     }
 
     public boolean isShooterReady() {
@@ -131,6 +149,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean getInvNoteSensor(){
         return !noteSensor.get();
     }
+    public boolean getshootSensor(){
+        return shootSensor.get();
+    }
+    public boolean getInvshoorSensor(){
+        return !shootSensor.get();
+    }
 
     @Override
     public void periodic() {
@@ -141,6 +165,9 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("shooter/Right Voltage", shooterRight.getBusVoltage());
         SmartDashboard.putNumber("shooter/Left Velocity", m_leftEncoder.getVelocity());
         SmartDashboard.putNumber("shooter/Right Velocity", m_rightEncoder.getVelocity());
+     
         SmartDashboard.putNumber("shooter/Velocity Requested", shooterSpeedReq);
+        SmartDashboard.putBoolean("AmpSensor/shootsensor", shootSensor.get());
     }
+    
 }

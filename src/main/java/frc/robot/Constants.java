@@ -33,13 +33,14 @@ public final class Constants {
     public static final int kintake1Id = 12;
     public static final int kintake2Id = 15;
     public static final int kNoteSensorId = 7;
+    public static final int kShootSensorId = 9;
 
-    public static final double kShooterAmpSpeed = 0.4;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
+    public static final double kShooterAmpSpeed = 0.5;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
     public static final double kIntakeAmpSpeed = 0.7;      // first test passed at 0.75
-    public static final double kShooterSpeakerSpeed = 10;
+    public static final double kShooterSpeakerSpeed = 1;
     public static final double kIntakeSpeakerSpeed = 1;
 
-    public static final double kPshooter = 6e-5;
+    public static final double kPshooter = 1;
     public static final double kIshooter = 0;
     public static final double kDshooter = 0;
     public static final double kFFshooter = 0.000015;
@@ -101,7 +102,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0724;
+    public static final double kWheelDiameterMeters = Units.inchesToMeters(2.9);
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 19) / (kDrivingMotorPinionTeeth * 15);
@@ -136,8 +137,9 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 65; // amps
+    public static final int kDrivingMotorCurrentLimit = 55; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
+
   }
 
   public static final class OIConstants {
@@ -148,7 +150,8 @@ public final class Constants {
   public static final class VisionConstants {
     public static final double kCameraRangeScaler = 0.05;
     public static final double kCameraAimScaler = 0.01;
-    public static final double kCameraTargetArea = 1.1; 
+    public static final double kCameraAmpTargetArea = 1.1; 
+    public static final double kCameraSpeakerTargetArea = 0.71; 
     public static final double kCamHeight = 0.41;
     public static final double kTagHeight = 1.27;
     public static final double kCamPitch = Math.PI / 4; // ~45 degrees (pi/4 rad)
@@ -158,9 +161,9 @@ public final class Constants {
     public static final int kArmMotorLeftCanId = 16;
     public static final int kArmMotorRightCanId = 17;
     public static final int kArmCountsPerRev = 8192; // from rev doc on throughbore
-    public static final double kArmSmackScaler = 4.25;
+    public static final double kArmSmackScaler = 4.65;
     public static final double kZeroOffset = 0.3;
-    public static final double kStartPosition = 1.5;
+    public static final double kStartPosition = 2.52;
   }
 
   public static final class AutoConstants {
