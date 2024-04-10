@@ -62,7 +62,7 @@ public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-    private final Vision m_vision = new Vision();
+    //private final Vision m_vision = new Vision();
     private final ArmSubsystem m_arm = new ArmSubsystem();
 
     // Define the controller being used
@@ -118,7 +118,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeOFF", new InstantCommand(() -> m_shooter.intakeOFF()));
         NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))));
         NamedCommands.registerCommand("shooterOFF", new InstantCommand(() -> m_shooter.shooterOFF()));
-
+        //NamedCommands.registerCommand("ResetGyro", new InstantCommand(() -> m_robot));
         // New autos use below
         NamedCommands.registerCommand("Shoot", shootSpeaker());
         
@@ -138,6 +138,7 @@ public class RobotContainer {
         );
 
         // Add commend to target in on thd april tag 
+        /* 
         NamedCommands.registerCommand("TargetAmp", 
             (new RunCommand(() -> targetAmp()))
             .until(m_vision::targetAreaReached).withTimeout(3)
@@ -147,6 +148,7 @@ public class RobotContainer {
             (new InstantCommand(() -> targetSpeaker()))
             .until(m_vision::targetAreaReached).withTimeout(1)
         );
+        */
         NamedCommands.registerCommand("ShootAmp", shootAmp());
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -174,7 +176,9 @@ public class RobotContainer {
         rightBumper.onTrue(shootSpeaker());
  
         // Intake manual controls (a/b buttons)
-        aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));    
+        //aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));    
+        aButton.onTrue(new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))));
+
         bButton.onTrue(new InstantCommand(() -> m_shooter.intakeOFF()));
 
         // Shooter manual controls (x/y buttons)
@@ -218,23 +222,19 @@ public class RobotContainer {
     // Commands used for buttons and auto
 
     private Command shootAmp() {
-        return new SequentialCommandGroup(
-
-        new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1)))
-            //.andThen(new WaitCommand(0.5))
-            .until(m_shooter::isShooterReady).withTimeout(1)
-            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))),
-            new WaitUntilCommand(() -> !m_shooter.shootSensor.get()),
-            new WaitCommand(0.1), 
-            new InstantCommand(() -> m_arm.rotateArmToAmp())
-                .andThen(new WaitCommand(.5))
-                .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
-                .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
-                .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))));
+        return (new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed))
+            //.until(m_shooter::isShooterReady).withTimeout(5)
+            .andThen(new WaitCommand(2))
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))
+            .until(m_shooter::getInvshootSensor).withTimeout(1))
+            .andThen(new WaitCommand(0.1))
+            .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
+            .andThen(new WaitCommand(.5))
+            .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
+            .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))));
             
-            }
-    
-        
+    }   
 
     private Command noteSensed(){
         return (new InstantCommand(() -> m_shooter.intakeOFF())
@@ -278,7 +278,7 @@ public class RobotContainer {
     // Aim to april tag if valid, otherwise use controller input
 
     private double rpiAimProp() {
-        double kP = camera_rotation.getDouble(0.35); // 0.035
+    /*     double kP = camera_rotation.getDouble(0.35); // 0.035
         if(m_vision.hasTarget()) {
             PhotonTrackedTarget target = m_vision.getTarget();
             if (m_vision.targetID(target) >= 4 && m_vision.targetID(target) <= 7){ 
@@ -289,11 +289,12 @@ public class RobotContainer {
             }
 
         }
+        */
         return -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband);
     }
   
     private double rpiRangeProp() {
-        double kP = camera_speed.getDouble(0.1); // 0.1
+     /*    double kP = camera_speed.getDouble(0.1); // 0.1
         if(m_vision.hasTarget()) {
             PhotonTrackedTarget target = m_vision.getTarget();
             if(m_vision.targetID(target) >= 4 && m_vision.targetID(target) <= 7){
@@ -303,6 +304,7 @@ public class RobotContainer {
                 return targetForwardSpeed; 
             }
         }
+        */
         return -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband);
     }
 

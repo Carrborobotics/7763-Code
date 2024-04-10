@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ModuleConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -46,13 +45,13 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterLeft.restoreFactoryDefaults();
         shooterRight.restoreFactoryDefaults();
 
-        shooterLeft.enableVoltageCompensation(10);
-        shooterRight.enableVoltageCompensation(10);
+      //  shooterLeft.enableVoltageCompensation(10);
+      //  shooterRight.enableVoltageCompensation(10);
         
         //shooterLeft.setOpenLoopRampRate(1.5);
         //shooterRight.setOpenLoopRampRate(1.5);
-        shooterLeft.setClosedLoopRampRate(1.5);
-        shooterRight.setClosedLoopRampRate(1.5);
+        shooterLeft.setClosedLoopRampRate(0.25);
+        shooterRight.setClosedLoopRampRate(0.25);
 
 
         m_leftPidController = shooterLeft.getPIDController();
@@ -86,8 +85,6 @@ public class ShooterSubsystem extends SubsystemBase {
         intake2.restoreFactoryDefaults();
 
         intake1.setSmartCurrentLimit(30);
-
-
         
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
         shootSensor = new DigitalInput(Constants.ShooterConstants.kShootSensorId);
@@ -101,7 +98,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void shooterON(double inputSpeed){
         
-        shooterSpeedReq = (inputSpeed * Constants.NeoMotorConstants.kFreeSpeedRpm );
+        shooterSpeedReq = (inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm );
         //shooterLeft.set(inputSpeed);
         //shooterRight.set(-inputSpeed);
         m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
@@ -110,11 +107,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public boolean isShooterReady() {
         return (Math.abs(m_leftEncoder.getVelocity() - shooterSpeedReq) < 50 && 
-            (Math.abs(m_rightEncoder.getVelocity() - shooterSpeedReq) < 50)); 
+            (Math.abs(m_rightEncoder.getVelocity() - shooterSpeedReq) < 50) && shooterSpeedReq > 100); 
     }
 
     public void shooterREV(){
-        shooterSpeedReq = -1 * Constants.NeoMotorConstants.kFreeSpeedRpm;
+        shooterSpeedReq = -1 * Constants.VortexMotorConstants.kFreeSpeedRpm;
         shooterLeft.set(-1);
         shooterRight.set(-1);
     }
@@ -152,7 +149,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean getshootSensor(){
         return shootSensor.get();
     }
-    public boolean getInvshoorSensor(){
+    public boolean getInvshootSensor(){
         return !shootSensor.get();
     }
 
@@ -167,6 +164,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("shooter/Right Velocity", m_rightEncoder.getVelocity());
      
         SmartDashboard.putNumber("shooter/Velocity Requested", shooterSpeedReq);
+        SmartDashboard.putBoolean("shooter/ready?", isShooterReady());
         SmartDashboard.putBoolean("AmpSensor/shootsensor", shootSensor.get());
     }
     
