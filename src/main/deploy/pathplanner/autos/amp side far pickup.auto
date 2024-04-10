@@ -1,0 +1,85 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.4966666704633864,
+      "y": 7.371800931942671
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp to far 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp to far 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp to far 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "centerish"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp to far 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "stage"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp to far 5"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

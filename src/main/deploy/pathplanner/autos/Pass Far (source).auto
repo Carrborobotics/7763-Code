@@ -1,0 +1,145 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.4876469639013716,
+      "y": 7.367317298737161
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shooterON"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source to Far1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot Far 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "to Far 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot Far 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To far 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot Far 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To far 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot Far 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

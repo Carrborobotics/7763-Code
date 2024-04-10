@@ -1,0 +1,67 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6573619984846805,
+      "y": 6.63
+    },
+    "rotation": -119.29782443915924
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shooterON"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "eabot1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftBack"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TargetSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
