@@ -135,6 +135,15 @@ public class MAXSwerveModule {
         new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
   }
 
+  // Suport for widget
+  public double getVelocity() {
+    return m_drivingEncoder.getVelocity();
+  }
+
+  public double getAngleInRadians() {
+    return m_turningEncoder.getPosition() * Math.PI/180; 
+  }
+
   /**
    * Sets the desired state for the module.
    *

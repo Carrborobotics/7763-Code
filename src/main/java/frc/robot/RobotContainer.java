@@ -6,17 +6,12 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import java.util.Map;
 
-import org.photonvision.common.hardware.VisionLEDMode;
-import org.photonvision.targeting.PhotonTrackedTarget;
+//import org.photonvision.common.hardware.VisionLEDMode;
+//import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,14 +22,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.Vision;
 
 
 /*
@@ -79,34 +73,12 @@ public class RobotContainer {
     Trigger rightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
     Trigger leftStick = new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value);
     Trigger rightStick = new JoystickButton(m_driverController, XboxController.Button.kRightStick.value);
+    Trigger povUp = new POVButton(m_driverController, 0);
 
-    private double m_ampSpeed = ShooterConstants.kShooterAmpSpeed;
-    private double m_speakerSpeed = ShooterConstants.kShooterSpeakerSpeed;
-    private double m_cameraAim = VisionConstants.kCameraAimScaler;
-    private double m_cameraRange = VisionConstants.kCameraRangeScaler;
+    private double m_ampSpeed = ShooterConstants.kShooterAmpSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
+    private double m_speakerSpeed = ShooterConstants.kShooterSpeakerSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
+    private double m_passSpeed = ShooterConstants.kShooterPassSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
 
-    private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
-
-    private GenericEntry amp_speed = tabSelected
-        .add("Amp Speed Scale", m_ampSpeed)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1))
-        .getEntry();
-    
-    private GenericEntry speaker_speed = tabSelected
-        .add("Speaker Speed Scaler", m_speakerSpeed)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1))
-        .getEntry();
-
-    private GenericEntry camera_rotation = tabSelected
-        .add("Camera Aim Scaler", m_cameraAim)
-        .getEntry();
-
-    private GenericEntry camera_speed = tabSelected
-        .add("Camera Speed Scaler", m_cameraRange)
-        .getEntry();
-    
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
 
@@ -116,11 +88,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeON", new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
         NamedCommands.registerCommand("intakeON", new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));
         NamedCommands.registerCommand("IntakeOFF", new InstantCommand(() -> m_shooter.intakeOFF()));
-        NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))));
+        NamedCommands.registerCommand("shooterON", new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Speaker Speed", m_speakerSpeed))));
         NamedCommands.registerCommand("shooterOFF", new InstantCommand(() -> m_shooter.shooterOFF()));
+
         //NamedCommands.registerCommand("ResetGyro", new InstantCommand(() -> m_robot));
         // New autos use below
         NamedCommands.registerCommand("Shoot", shootSpeaker());
+        NamedCommands.registerCommand("Pass", pass());
         
         // Add command to have limelight find note in auto
         // uses limelight
@@ -154,6 +128,10 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
+        SmartDashboard.putNumber("shooter/Shooter Amp Speed", m_ampSpeed);
+        SmartDashboard.putNumber("shooter/Shooter Speaker Speed", m_speakerSpeed);
+        SmartDashboard.putNumber("shooter/Shooter Pass Speed", m_passSpeed);
+
         configureButtonBindings();
          
         m_robotDrive.setDefaultCommand(
@@ -174,15 +152,19 @@ public class RobotContainer {
 
         // Shoot the shot at speaker
         rightBumper.onTrue(shootSpeaker());
+
+        // Pass the note
+        povUp.onTrue(pass());
  
         // Intake manual controls (a/b buttons)
-        //aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));    
-        aButton.onTrue(new InstantCommand(() -> m_shooter.shooterON(amp_speed.getDouble(1))));
-
+        aButton.onTrue(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)));    
         bButton.onTrue(new InstantCommand(() -> m_shooter.intakeOFF()));
 
         // Shooter manual controls (x/y buttons)
-        xButton.onTrue(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(1))));
+        xButton.onTrue(new InstantCommand(() -> m_shooter.shooterON(
+            SmartDashboard.getNumber("shooter/Shooter Speaker Speed", m_speakerSpeed)
+        )));
+
         yButton.onTrue(new InstantCommand(() -> m_shooter.shooterOFF()));
 
         // Start button fixes the odometry and resets to +90deg
@@ -222,9 +204,9 @@ public class RobotContainer {
     // Commands used for buttons and auto
 
     private Command shootAmp() {
-        return (new InstantCommand(() -> m_shooter.shooterON(ShooterConstants.kShooterAmpSpeed))
+        return (new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Amp Speed", m_ampSpeed)))
             //.until(m_shooter::isShooterReady).withTimeout(5)
-            .andThen(new WaitCommand(2))
+            .andThen(new WaitCommand(1.5))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))
             .until(m_shooter::getInvshootSensor).withTimeout(1))
             .andThen(new WaitCommand(0.1))
@@ -233,32 +215,39 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))));
-            
     }   
+
+    private Command pass() {
+        return (new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Pass Speed", m_passSpeed)))
+                .until(m_shooter::isShooterReady).withTimeout(0.5)
+            .andThen(new InstantCommand(() -> m_arm.rotateArmToPass()))
+            .andThen(new WaitCommand(0.1))
+            .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)))
+                .until(m_shooter::getInvshootSensor).withTimeout(1)
+            .andThen(new WaitCommand(0.1))
+            .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
+            .andThen(new InstantCommand(() -> m_shooter.shooterOFF())));
+    }
 
     private Command noteSensed(){
         return (new InstantCommand(() -> m_shooter.intakeOFF())
             .alongWith(Commands.runOnce(() -> m_driverController.setRumble(RumbleType.kBothRumble, 2)))
-            .andThen(new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(10))))
+            .andThen(new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Speaker Speed", m_speakerSpeed))))
             .andThen(new WaitCommand(0.5))
             .andThen(Commands.runOnce(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)))
-
         );
     }
-  
-    
 
     private Command shootSpeaker() {
         return new SequentialCommandGroup(
-        new InstantCommand(() -> m_shooter.shooterON(speaker_speed.getDouble(10)))
+        new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Speaker Speed", m_speakerSpeed)))
             .until(m_shooter::isShooterReady).withTimeout(0.5)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))),
         new WaitUntilCommand(() -> !m_shooter.shootSensor.get()).withTimeout(1),
         new WaitCommand(0.1), 
             new InstantCommand(() -> m_shooter.shooterOFF()));
     }
-
-
+    /* 
     private Command targetAmp() {
         return new RunCommand(() -> m_robotDrive.drive(
                     rpiRangeProp(),
@@ -274,11 +263,11 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     false, false, false), m_robotDrive);
     }    
-
+    
     // Aim to april tag if valid, otherwise use controller input
 
     private double rpiAimProp() {
-    /*     double kP = camera_rotation.getDouble(0.35); // 0.035
+        double kP = camera_rotation.getDouble(0.35); // 0.035
         if(m_vision.hasTarget()) {
             PhotonTrackedTarget target = m_vision.getTarget();
             if (m_vision.targetID(target) >= 4 && m_vision.targetID(target) <= 7){ 
@@ -289,12 +278,12 @@ public class RobotContainer {
             }
 
         }
-        */
+        
         return -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband);
     }
   
     private double rpiRangeProp() {
-     /*    double kP = camera_speed.getDouble(0.1); // 0.1
+         double kP = camera_speed.getDouble(0.1); // 0.1
         if(m_vision.hasTarget()) {
             PhotonTrackedTarget target = m_vision.getTarget();
             if(m_vision.targetID(target) >= 4 && m_vision.targetID(target) <= 7){
@@ -304,10 +293,10 @@ public class RobotContainer {
                 return targetForwardSpeed; 
             }
         }
-        */
+        
         return -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband);
     }
-
+    */
     // Get auto command from shuffleboard chooser
 
     public Command getAutonomousCommand() {

@@ -39,6 +39,10 @@ public final class Constants {
     public static final double kIntakeAmpSpeed = 0.7;      // first test passed at 0.75
     public static final double kShooterSpeakerSpeed = 1;
     public static final double kIntakeSpeakerSpeed = 1;
+    public static final double kShooterPassSpeed = 1.3;
+
+    public static final int kIntakeCurrentLimit = 30;
+    public static final double kShooterRampRate = 0.25;
 
     // best PID = 0.0005,0,0.005
     public static final double kPshooter = 0.0009;
@@ -149,8 +153,8 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final double kCameraRangeScaler = 0.05;
-    public static final double kCameraAimScaler = 0.01;
+    public static final double kCameraRangeScaler = 0.015;
+    public static final double kCameraAimScaler = 0.033;
     public static final double kCameraAmpTargetArea = 1.1; 
     public static final double kCameraSpeakerTargetArea = 0.71; 
     public static final double kCamHeight = 0.41;
@@ -165,6 +169,8 @@ public final class Constants {
     public static final double kArmSmackScaler = 4.65;
     public static final double kZeroOffset = 0.3;
     public static final double kStartPosition = 2.52;
+    public static final int kArmCurrentLimit = 20;
+    public static final double kPassPosition = 3.14;
   }
 
   public static final class AutoConstants {

@@ -7,20 +7,21 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
@@ -65,20 +66,6 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
-
-  // Setup limelight scaling to be on shuffleboard ( normalized )
-  private double m_speedScaler = 1.5;
-  private double m_rotScaler = 3.3;
-
-  private ShuffleboardTab tabSelected = Shuffleboard.getTab("tweaks");
-
-  private GenericEntry ll_speed_scale = tabSelected
-    .add("Limelight Speed Scaler", m_speedScaler)
-    .getEntry();
- 
-  private GenericEntry ll_rot_scale = tabSelected
-    .add("Limelight Rotation Scaler", m_rotScaler)
-    .getEntry();
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -129,8 +116,8 @@ public class DriveSubsystem extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(8.0, 0.0, 0.0), // Translation PID constants  // default was 5,0,0
+            new PIDConstants(2.0, 0.0, 0.0), // Rotation PID constants // default was 5,0,0
             4.5, // Max module speed, in m/s
             0.368, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -149,7 +136,33 @@ public class DriveSubsystem extends SubsystemBase {
         },
         this // Reference to this subsystem to set requirements
     );
-  }
+
+    // Dashboard widget for swerve 
+    SmartDashboard.putData("swerve/Swerve Drive", new Sendable() {
+    @Override
+    public void initSendable(SendableBuilder builder) {
+      builder.setSmartDashboardType("SwerveDrive");
+
+      builder.addDoubleProperty("Front Left Angle", () -> m_frontLeft.getAngleInRadians(), null);
+      builder.addDoubleProperty("Front Left Velocity", () -> m_frontLeft.getVelocity(), null);
+
+      builder.addDoubleProperty("Front Right Angle", () -> m_frontRight.getAngleInRadians(), null);
+      builder.addDoubleProperty("Front Right Velocity", () -> m_frontRight.getVelocity(), null);
+
+      builder.addDoubleProperty("Back Left Angle", () -> m_rearLeft.getAngleInRadians(), null);
+      builder.addDoubleProperty("Back Left Velocity", () -> m_rearLeft.getVelocity(), null);
+
+      builder.addDoubleProperty("Back Right Angle", () -> m_rearRight.getAngleInRadians(), null);
+      builder.addDoubleProperty("Back Right Velocity", () -> m_rearRight.getVelocity(), null);
+
+      builder.addDoubleProperty("Robot Angle", () -> getHeading() * Math.PI/180, null);
+    }
+  });
+
+  SmartDashboard.putNumber("limelight/Note Range P", Constants.VisionConstants.kCameraRangeScaler);
+  SmartDashboard.putNumber("limelight/Note Aim P", Constants.VisionConstants.kCameraAimScaler);
+
+}
 
   @Override
   public void periodic() {
@@ -163,11 +176,11 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     SmartDashboard.putNumber("Heading", getHeading());
-    SmartDashboard.putNumber("TX", LimelightHelpers.getTX("limelight"));
-    SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight"));
-    SmartDashboard.putBoolean("Note Targetted", LimelightHelpers.getTV("limelight"));
+    SmartDashboard.putNumber("limelight/Note TX", LimelightHelpers.getTX("limelight"));
+    SmartDashboard.putNumber("limelight/Note TY", LimelightHelpers.getTY("limelight"));
+    SmartDashboard.putBoolean("limelight/Note Targetted", LimelightHelpers.getTV("limelight"));
   }
-  
+
   /**
    * Returns the currently-estimated pose of the robot.
    *
@@ -194,19 +207,17 @@ public class DriveSubsystem extends SubsystemBase {
         pose);
   }
 
-   double limelightAimProp() {
-        //double kP = 0.015; // 0.035
-        double targetAngularVel = LimelightHelpers.getTX("limelight") * ll_rot_scale.getDouble(1) / 100;
+  private double limelightAimProp() {
+        double targetAngularVel = LimelightHelpers.getTX("limelight") * SmartDashboard.getNumber("limelight/Note Aim P", Constants.VisionConstants.kCameraAimScaler);
         targetAngularVel *= -1;
-        SmartDashboard.putNumber("Angular Vel", targetAngularVel);
+        SmartDashboard.putNumber("limelight/Note Requested Angular Velcity", targetAngularVel);
         return targetAngularVel;
     }
   
-    double limelightRangeProp() {
-        //double kP = 0.1; // 0.1
-        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * ll_speed_scale.getDouble(1) / 100;
+  private double limelightRangeProp() {
+        double targetForwardSpeed = LimelightHelpers.getTY("limelight") * SmartDashboard.getNumber("limelight/Note Range P", Constants.VisionConstants.kCameraRangeScaler);
         targetForwardSpeed *= -1;
-        SmartDashboard.putNumber("Forward Speed", targetForwardSpeed);
+        SmartDashboard.putNumber("limelight/Note Requested Forward Speed", targetForwardSpeed);
         return targetForwardSpeed; 
     }
 
@@ -280,13 +291,16 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedDelivered = xSpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
-
-    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        
-      fieldRelative
+    ChassisSpeeds desiredChassisSpeeds =       
+        fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
                 Rotation2d.fromDegrees(-m_gyro.getAngle()))
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered);
+
+    desiredChassisSpeeds = correctForDynamics(desiredChassisSpeeds);
+
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(desiredChassisSpeeds);  
+
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -295,6 +309,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
+
+  
   public void getchassisspeed() {
 
   }
@@ -307,6 +323,28 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+  }
+
+  /**
+   * Correction for swerve second order dynamics issue. Borrowed from 254:
+   * https://github.com/Team254/FRC-2022-Public/blob/main/src/main/java/com/team254/frc2022/subsystems/Drive.java#L325
+   * Discussion:
+   * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964
+   */
+  private static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
+    final double LOOP_TIME_S = 0.02;
+    Pose2d futureRobotPose =
+        new Pose2d(
+            originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
+            originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
+            Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S));
+    Twist2d twistForPose = new Pose2d().log(futureRobotPose);
+    ChassisSpeeds updatedSpeeds =
+        new ChassisSpeeds(
+            twistForPose.dx / LOOP_TIME_S,
+            twistForPose.dy / LOOP_TIME_S,
+            twistForPose.dtheta / LOOP_TIME_S);
+    return updatedSpeeds;
   }
 
   /**

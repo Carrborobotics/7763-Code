@@ -1,15 +1,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-import edu.wpi.first.util.ErrorMessages;
-import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,34 +20,25 @@ public class ArmSubsystem extends SubsystemBase {
     private AbsoluteEncoder m_armEncoder;
 
     public double kP, kI, kD, kIz, kFF, kMax, kMin, kRot;
-    public double  m_startpos;
-    public double m_smackScaler;
+    public double  m_startpos, m_smackScaler, m_armPassPos;
 
     public ArmSubsystem() {
         
-        // Create motor controller
-        try { 
-            Thread.sleep(200);
-        } catch (Exception e) {
-            System.err.println(e);
-        }
         armMotorLeft = new CANSparkMax(Constants.ArmConstants.kArmMotorLeftCanId, MotorType.kBrushless);
         armMotorRight = new CANSparkMax(Constants.ArmConstants.kArmMotorRightCanId, MotorType.kBrushless);
         
-        // Return the encoder to default state
-        //armMotorLeft.restoreFactoryDefaults();
-        //armMotorRight.restoreFactoryDefaults();
         armMotorRight.follow(armMotorLeft, true);
 
         // Create PID controllers
         m_leftPidController = armMotorLeft.getPIDController();
+
         m_smackScaler = Constants.ArmConstants.kArmSmackScaler;
         m_startpos = Constants.ArmConstants.kStartPosition;
+        m_armPassPos = Constants.ArmConstants.kPassPosition;
 
         // Setup throughbore encoder
         m_armEncoder = armMotorLeft.getAbsoluteEncoder(Type.kDutyCycle);
         m_armEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
-        //m_armEncoder.setZeroOffset(Constants.ArmConstants.kZeroOffset);
         m_leftPidController.setFeedbackDevice(m_armEncoder);
 
         // Setup PID controllers
@@ -60,10 +46,8 @@ public class ArmSubsystem extends SubsystemBase {
         m_leftPidController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
         m_leftPidController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
 
-        // Keep when browning out
-        armMotorLeft.burnFlash();
-        armMotorRight.burnFlash();
-
+        armMotorLeft.setSmartCurrentLimit(Constants.ArmConstants.kArmCurrentLimit);
+        armMotorRight.setSmartCurrentLimit(Constants.ArmConstants.kArmCurrentLimit);
 
         try { 
             Thread.sleep(200);
@@ -71,35 +55,13 @@ public class ArmSubsystem extends SubsystemBase {
             System.err.println(e);
         }
 
-
-        armMotorRight.follow(armMotorLeft, true);
-
-        // Create PID controllers
-        m_leftPidController = armMotorLeft.getPIDController();
-        m_smackScaler = Constants.ArmConstants.kArmSmackScaler;
-        m_startpos = Constants.ArmConstants.kStartPosition;
-
-        // Setup throughbore encoder
-        m_armEncoder = armMotorLeft.getAbsoluteEncoder(Type.kDutyCycle);
-        m_armEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
-        //m_armEncoder.setZeroOffset(Constants.ArmConstants.kZeroOffset);
-        m_leftPidController.setFeedbackDevice(m_armEncoder);
-
-        // Setup PID controllers
-        m_leftPidController.setPositionPIDWrappingEnabled(true);
-        m_leftPidController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
-        m_leftPidController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
-
         // Keep when browning out
         armMotorLeft.burnFlash();
         armMotorRight.burnFlash();
 
-        
-
-
         // Set defaults for PID control
         kP = 1;
-        kI = 0;//1e-4;
+        kI = 0; //1e-4;
         kD = 0;
         kMax = .3;
         kMin = -.3;
@@ -120,12 +82,6 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("arm/scaler", Constants.ArmConstants.kArmSmackScaler);
         SmartDashboard.putNumber("arm/start position", Constants.ArmConstants.kStartPosition);
 
-        // Record start position
-        //m_startpos = m_armEncoder.getPosition();
-        //m_whole = m_startpos / Math.PI * 2;
-        // startpos = 15 - 2*PI = 12.5 
-        // target = 4.5 + 6.28*whole
-
         // Try to start at 0
         m_leftPidController.setReference(m_startpos, CANSparkMax.ControlType.kPosition);
 
@@ -138,6 +94,10 @@ public class ArmSubsystem extends SubsystemBase {
 
      public void rotateArmToBot() {
         m_leftPidController.setReference(m_startpos, CANSparkMax.ControlType.kPosition);
+    }   
+
+     public void rotateArmToPass() {
+        m_leftPidController.setReference(m_armPassPos, CANSparkMax.ControlType.kPosition);
     }   
 
     @Override

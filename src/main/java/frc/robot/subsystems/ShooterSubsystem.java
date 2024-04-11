@@ -48,11 +48,10 @@ public class ShooterSubsystem extends SubsystemBase {
       //  shooterLeft.enableVoltageCompensation(10);
       //  shooterRight.enableVoltageCompensation(10);
         
-        //shooterLeft.setOpenLoopRampRate(1.5);
-        //shooterRight.setOpenLoopRampRate(1.5);
-        shooterLeft.setClosedLoopRampRate(0.25);
-        shooterRight.setClosedLoopRampRate(0.25);
-
+        shooterLeft.setClosedLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
+        shooterRight.setClosedLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
+        intake1.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
+        intake2.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
 
         m_leftPidController = shooterLeft.getPIDController();
 
@@ -84,8 +83,9 @@ public class ShooterSubsystem extends SubsystemBase {
         intake1.restoreFactoryDefaults();
         intake2.restoreFactoryDefaults();
 
-        intake1.setSmartCurrentLimit(30);
-        
+        intake1.setSmartCurrentLimit(Constants.ShooterConstants.kIntakeCurrentLimit);
+        intake2.setSmartCurrentLimit(Constants.ShooterConstants.kIntakeCurrentLimit);
+
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
         shootSensor = new DigitalInput(Constants.ShooterConstants.kShootSensorId);
 
@@ -94,13 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // Start up with the intake ON
         //intakeON(1);
     }
-    // NOTE: vortex has inverted speed to neo
-
     public void shooterON(double inputSpeed){
-        
         shooterSpeedReq = (inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm );
-        //shooterLeft.set(inputSpeed);
-        //shooterRight.set(-inputSpeed);
         m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
         m_rightPidController.setReference(-shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);    
     }
@@ -162,7 +157,6 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("shooter/Right Voltage", shooterRight.getBusVoltage());
         SmartDashboard.putNumber("shooter/Left Velocity", m_leftEncoder.getVelocity());
         SmartDashboard.putNumber("shooter/Right Velocity", m_rightEncoder.getVelocity());
-     
         SmartDashboard.putNumber("shooter/Velocity Requested", shooterSpeedReq);
         SmartDashboard.putBoolean("shooter/ready?", isShooterReady());
         SmartDashboard.putBoolean("AmpSensor/shootsensor", shootSensor.get());
