@@ -95,7 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //intakeON(1);
     }
     public void shooterON(double inputSpeed){
-        shooterSpeedReq = (inputSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm );
+        shooterSpeedReq = (inputSpeed);
         m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
         m_rightPidController.setReference(-shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);    
     }
