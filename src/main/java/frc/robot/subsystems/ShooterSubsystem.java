@@ -28,7 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private RelativeEncoder m_leftEncoder;
     private RelativeEncoder m_rightEncoder;
 
-    private CANSparkMax intake1;
+   // private CANSparkMax intake1;
     private CANSparkMax intake2;
     
     private DigitalInput noteSensor;
@@ -47,11 +47,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
       //  shooterLeft.enableVoltageCompensation(10);
       //  shooterRight.enableVoltageCompensation(10);
-        
+        SmartDashboard.putNumber("shooter/P", Constants.ShooterConstants.kPshooter);
+        SmartDashboard.putNumber("shooter/I", Constants.ShooterConstants.kIshooter);
+        SmartDashboard.putNumber("shooter/D", Constants.ShooterConstants.kDshooter);
+        SmartDashboard.putNumber("shooter/FF", Constants.ShooterConstants.kFFshooter);
+
         shooterLeft.setClosedLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
         shooterRight.setClosedLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
-        intake1.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
-        intake2.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
+        //intake1.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
+       // intake2.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
 
         m_leftPidController = shooterLeft.getPIDController();
 
@@ -77,13 +81,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_leftPidController.setFeedbackDevice(m_leftEncoder);
         m_rightPidController.setFeedbackDevice(m_rightEncoder);
 
-        intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
+        //intake1 = new CANSparkMax(Constants.ShooterConstants.kintake1Id, MotorType.kBrushless);
         intake2 = new CANSparkMax(Constants.ShooterConstants.kintake2Id, MotorType.kBrushless);
+        intake2.setOpenLoopRampRate(Constants.ShooterConstants.kShooterRampRate);
 
-        intake1.restoreFactoryDefaults();
+       // intake1.restoreFactoryDefaults();
         intake2.restoreFactoryDefaults();
 
-        intake1.setSmartCurrentLimit(Constants.ShooterConstants.kIntakeCurrentLimit);
+       // intake1.setSmartCurrentLimit(Constants.ShooterConstants.kIntakeCurrentLimit);
         intake2.setSmartCurrentLimit(Constants.ShooterConstants.kIntakeCurrentLimit);
 
         noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorId);
@@ -96,6 +101,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     public void shooterON(double inputSpeed){
         shooterSpeedReq = (inputSpeed);
+
         m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
         m_rightPidController.setReference(-shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);    
     }
@@ -118,17 +124,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void intakeON(double inputSpeed){
-        intake1.set(inputSpeed);
+        //intake1.set(inputSpeed);
         intake2.set(-inputSpeed);
     }
   
     public void intakeOFF(){
-        intake1.set(0);
+       // intake1.set(0);
         intake2.set(0);
     }
     
     public void intakeREV(){
-        intake1.set(-0.5);
+       // intake1.set(-0.5);
         intake2.set(0.5);        
     }
 
@@ -160,6 +166,14 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("shooter/Velocity Requested", shooterSpeedReq);
         SmartDashboard.putBoolean("shooter/ready?", isShooterReady());
         SmartDashboard.putBoolean("AmpSensor/shootsensor", shootSensor.get());
+        /* 
+        m_rightPidController.setP(SmartDashboard.getNumber("shooter/P", Constants.ShooterConstants.kPshooter));
+        m_leftPidController.setP(SmartDashboard.getNumber("shooter/P", Constants.ShooterConstants.kPshooter));
+        m_rightPidController.setI(SmartDashboard.getNumber("shooter/D", Constants.ShooterConstants.kIshooter));
+        m_leftPidController.setI(SmartDashboard.getNumber("shooter/D", Constants.ShooterConstants.kIshooter));
+        m_rightPidController.setD(SmartDashboard.getNumber("shooter/D", Constants.ShooterConstants.kDshooter));
+        m_leftPidController.setD(SmartDashboard.getNumber("shooter/D", Constants.ShooterConstants.kDshooter));
+        */
     }
     
 }

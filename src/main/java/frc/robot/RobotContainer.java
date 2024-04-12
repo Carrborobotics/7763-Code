@@ -205,13 +205,12 @@ public class RobotContainer {
 
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Amp Speed", m_ampSpeed)))
-            //.until(m_shooter::isShooterReady).withTimeout(5)
-            .andThen(new WaitCommand(1.5))
+            .andThen(new WaitCommand(1.5)).until(m_shooter::isShooterReady)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))
             .until(m_shooter::getInvshootSensor).withTimeout(1))
-            .andThen(new WaitCommand(0.1))
+            .andThen(new WaitCommand(0.185))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
-            .andThen(new WaitCommand(.5))
+            .andThen(new WaitCommand(.25))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))));
@@ -220,12 +219,12 @@ public class RobotContainer {
     private Command pass() {
         return (new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Pass Speed", m_passSpeed)))
                 .until(m_shooter::isShooterReady).withTimeout(0.5)
-            .andThen(new InstantCommand(() -> m_arm.rotateArmToPass()))
-            .andThen(new WaitCommand(0.1))
+//            .andThen(new InstantCommand(() -> m_arm.rotateArmToPass()))
+//            .andThen(new WaitCommand(0.1))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed)))
                 .until(m_shooter::getInvshootSensor).withTimeout(1)
-            .andThen(new WaitCommand(0.1))
-            .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
+            .andThen(new WaitCommand(0.1)) //0.25 for arm deploy
+//            .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF())));
     }
 

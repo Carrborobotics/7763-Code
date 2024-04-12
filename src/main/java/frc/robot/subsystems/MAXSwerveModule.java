@@ -26,7 +26,7 @@ public class MAXSwerveModule {
 
   private final SparkPIDController m_drivingPIDController;
   private final SparkPIDController m_turningPIDController;
-
+  private Rotation2d m_rot2d;
   private double m_chassisAngularOffset = 0;
   private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
 
@@ -141,7 +141,8 @@ public class MAXSwerveModule {
   }
 
   public double getAngleInRadians() {
-    return m_turningEncoder.getPosition() * Math.PI/180; 
+    m_rot2d = new Rotation2d(m_turningEncoder.getPosition());
+    return  m_rot2d.getRadians();
   }
 
   /**

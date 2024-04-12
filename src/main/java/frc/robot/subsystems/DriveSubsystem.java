@@ -143,16 +143,16 @@ public class DriveSubsystem extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
       builder.setSmartDashboardType("SwerveDrive");
 
-      builder.addDoubleProperty("Front Left Angle", () -> m_frontLeft.getAngleInRadians(), null);
+      builder.addDoubleProperty("Front Left Angle", () -> m_frontLeft.getAngleInRadians() + Math.PI/2, null);
       builder.addDoubleProperty("Front Left Velocity", () -> m_frontLeft.getVelocity(), null);
 
       builder.addDoubleProperty("Front Right Angle", () -> m_frontRight.getAngleInRadians(), null);
       builder.addDoubleProperty("Front Right Velocity", () -> m_frontRight.getVelocity(), null);
 
-      builder.addDoubleProperty("Back Left Angle", () -> m_rearLeft.getAngleInRadians(), null);
+      builder.addDoubleProperty("Back Left Angle", () -> m_rearLeft.getAngleInRadians() + Math.PI, null);
       builder.addDoubleProperty("Back Left Velocity", () -> m_rearLeft.getVelocity(), null);
 
-      builder.addDoubleProperty("Back Right Angle", () -> m_rearRight.getAngleInRadians(), null);
+      builder.addDoubleProperty("Back Right Angle", () -> m_rearRight.getAngleInRadians() - Math.PI/2, null);
       builder.addDoubleProperty("Back Right Velocity", () -> m_rearRight.getVelocity(), null);
 
       builder.addDoubleProperty("Robot Angle", () -> getHeading() * Math.PI/180, null);

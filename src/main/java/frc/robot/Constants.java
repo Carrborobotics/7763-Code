@@ -35,32 +35,31 @@ public final class Constants {
     public static final int kNoteSensorId = 7;
     public static final int kShootSensorId = 9;
 
-    public static final double kShooterAmpSpeed = 0.5;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
+    public static final double kShooterAmpSpeed = 0.2;    // voltage: 12.29 at speed 0.13, first test passed at 0.125
     public static final double kIntakeAmpSpeed = 0.7;      // first test passed at 0.75
     public static final double kShooterSpeakerSpeed = 1;
     public static final double kIntakeSpeakerSpeed = 1;
     public static final double kShooterPassSpeed = 1.3;
 
-    public static final int kIntakeCurrentLimit = 30;
-    public static final double kShooterRampRate = 0.25;
+    public static final int kIntakeCurrentLimit = 60;
+    public static final double kShooterRampRate = 0.2;
 
     // best PID = 0.0005,0,0.005
-    public static final double kPshooter = 0.0009;
+    public static final double kPshooter = 0.0005;
     public static final double kIshooter = 0;
-    public static final double kDshooter = 0.002;
+    public static final double kDshooter = 0;
     public static final double kFFshooter = 0;
     public static final double kMaxShooter = 1;
     public static final double kMinShooter = -1;
-
-
   }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final double kMaxSpeedMetersPerSecond = 6.5; //def: 4.8
-    public static final double kMaxAngularSpeed = 1.75 * Math.PI; // radians per second
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
-    public static final double kDirectionSlewRate = 5.0; // radians per second
+    public static final double kDirectionSlewRate = 4.0; // radians per second
     public static final double kMagnitudeSlewRate = 3.0; // percent per second (1 = 100%)
     public static final double kRotationalSlewRate = 15; // percent per second (1 = 100%)
 
@@ -149,7 +148,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.1;
+    public static final double kDriveDeadband = 0.125;
   }
 
   public static final class VisionConstants {
@@ -170,7 +169,7 @@ public final class Constants {
     public static final double kZeroOffset = 0.3;
     public static final double kStartPosition = 2.52;
     public static final int kArmCurrentLimit = 20;
-    public static final double kPassPosition = 3.14;
+    public static final double kPassPosition = 4.075;
   }
 
   public static final class AutoConstants {
