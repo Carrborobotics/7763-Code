@@ -50,6 +50,12 @@
         {
           "type": "named",
           "data": {
+            "name": "FindSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Shoot"
           }
         },
@@ -68,7 +74,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot top"
+            "pathName": "Shoot mid"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindSpeaker"
           }
         },
         {
@@ -92,7 +104,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot low"
+            "pathName": "Shoot mid"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FindSpeaker"
           }
         },
         {

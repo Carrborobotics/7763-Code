@@ -47,7 +47,7 @@ public final class Constants {
     // best PID = 0.0005,0,0.005
     public static final double kPshooter = 0.0005;
     public static final double kIshooter = 0;
-    public static final double kDshooter = 0;
+    public static final double kDshooter = 0.0005;
     public static final double kFFshooter = 0;
     public static final double kMaxShooter = 1;
     public static final double kMinShooter = -1;

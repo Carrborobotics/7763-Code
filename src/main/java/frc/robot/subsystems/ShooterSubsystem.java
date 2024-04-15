@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -101,9 +102,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     public void shooterON(double inputSpeed){
         shooterSpeedReq = (inputSpeed);
-
-        m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
-        m_rightPidController.setReference(-shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);    
+        shooterLeft.set(inputSpeed);
+        shooterRight.set(-inputSpeed);
+        //m_leftPidController.setReference(shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);
+        //m_rightPidController.setReference(-shooterSpeedReq, CANSparkFlex.ControlType.kVelocity);    
     }
 
     public boolean isShooterReady() {
@@ -154,6 +156,13 @@ public class ShooterSubsystem extends SubsystemBase {
         return !shootSensor.get();
     }
 
+    public boolean tagged(){
+        if ((LimelightHelpers.getTA("limelight-tag") >= 0.7) && Math.abs((LimelightHelpers.getTX("limelight-tag"))) <= 10){
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void periodic() {
         // Handle checking the note sensor to see if the intake is loaded
@@ -166,6 +175,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("shooter/Velocity Requested", shooterSpeedReq);
         SmartDashboard.putBoolean("shooter/ready?", isShooterReady());
         SmartDashboard.putBoolean("AmpSensor/shootsensor", shootSensor.get());
+        SmartDashboard.putBoolean("limelight/tagged", tagged());
         /* 
         m_rightPidController.setP(SmartDashboard.getNumber("shooter/P", Constants.ShooterConstants.kPshooter));
         m_leftPidController.setP(SmartDashboard.getNumber("shooter/P", Constants.ShooterConstants.kPshooter));

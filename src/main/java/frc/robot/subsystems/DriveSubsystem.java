@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -57,6 +58,7 @@ public class DriveSubsystem extends SubsystemBase {
   // Update to the navx gyro
 
   private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+  private Pose2d initialPose;
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -104,6 +106,8 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     setModuleStates(swerveModuleStates);
   }
+
+
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -161,7 +165,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   SmartDashboard.putNumber("limelight/Note Range P", Constants.VisionConstants.kCameraRangeScaler);
   SmartDashboard.putNumber("limelight/Note Aim P", Constants.VisionConstants.kCameraAimScaler);
-
+  initialPose = getPose();
 }
 
   @Override
@@ -179,6 +183,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("limelight/Note TX", LimelightHelpers.getTX("limelight"));
     SmartDashboard.putNumber("limelight/Note TY", LimelightHelpers.getTY("limelight"));
     SmartDashboard.putBoolean("limelight/Note Targetted", LimelightHelpers.getTV("limelight"));
+    SmartDashboard.putNumber("limelight/Tag TX", LimelightHelpers.getTX("limelight-tag"));
+    SmartDashboard.putNumber("limelight/Tag TY", LimelightHelpers.getTY("limelight-tag"));
+    SmartDashboard.putBoolean("limelight/Tag Targetted", LimelightHelpers.getTV("limelight-tag"));
   }
 
   /**
@@ -221,6 +228,20 @@ public class DriveSubsystem extends SubsystemBase {
         return targetForwardSpeed; 
     }
 
+  private double limelightAimPropTag() {
+        double targetAngularVel = LimelightHelpers.getTX("limelight-tag") * SmartDashboard.getNumber("limelight/Note Aim P", Constants.VisionConstants.kCameraAimScaler);
+        targetAngularVel *= -.375;
+        SmartDashboard.putNumber("limelight/Note Requested Angular Velcity", targetAngularVel);
+        return targetAngularVel;
+    }
+  
+  private double limelightRangePropTag() {
+        double targetForwardSpeed = (1 /LimelightHelpers.getTY("limelight-tag")) * SmartDashboard.getNumber("limelight/Note Range P", Constants.VisionConstants.kCameraRangeScaler);
+        targetForwardSpeed *= 150;
+        SmartDashboard.putNumber("limelight/Note Requested Forward Speed", targetForwardSpeed);
+        return targetForwardSpeed; 
+    }
+
   /**
    * Method to drive the robot using joystick info.
    *
@@ -231,13 +252,26 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, boolean useLimelight) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, boolean useNoteLimelight, boolean useTagLimelight) {
 
     double xSpeedCommanded;
     double ySpeedCommanded;
-    if (LimelightHelpers.getTV("limelight") && useLimelight) {
+    if (LimelightHelpers.getTV("limelight") && useNoteLimelight) {
       xSpeed = limelightRangeProp();
       rot = limelightAimProp();
+      fieldRelative = false;
+      rateLimit = false;
+    }
+    if (LimelightHelpers.getTV("limelight-tag") && useTagLimelight && (LimelightHelpers.getTA("limelight-tag") <= 0.7)) {
+      xSpeed = limelightRangePropTag();
+      //rot = limelightAimPropTag();
+      ySpeed = limelightAimPropTag();
+      //rot = initialPose.getRotation().getRotations();
+      fieldRelative = false; 
+      rateLimit = false;
+    }
+    else if (LimelightHelpers.getTV("limelight-tag") && useTagLimelight && Math.abs((LimelightHelpers.getTX("limelight-tag"))) >= 10) {
+      ySpeed = limelightAimPropTag();
       fieldRelative = false;
       rateLimit = false;
     }

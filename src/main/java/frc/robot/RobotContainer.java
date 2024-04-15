@@ -11,9 +11,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 //import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +33,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ledSubsystem;
 
 
 /*
@@ -58,6 +63,7 @@ public class RobotContainer {
     private final ShooterSubsystem m_shooter = new ShooterSubsystem();
     //private final Vision m_vision = new Vision();
     private final ArmSubsystem m_arm = new ArmSubsystem();
+    private final ledSubsystem m_led = new ledSubsystem();
 
     // Define the controller being used
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -75,9 +81,9 @@ public class RobotContainer {
     Trigger rightStick = new JoystickButton(m_driverController, XboxController.Button.kRightStick.value);
     Trigger povUp = new POVButton(m_driverController, 0);
 
-    private double m_ampSpeed = ShooterConstants.kShooterAmpSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
-    private double m_speakerSpeed = ShooterConstants.kShooterSpeakerSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
-    private double m_passSpeed = ShooterConstants.kShooterPassSpeed * Constants.VortexMotorConstants.kFreeSpeedRpm;
+    private double m_ampSpeed = ShooterConstants.kShooterAmpSpeed; // * Constants.VortexMotorConstants.kFreeSpeedRpm;
+    private double m_speakerSpeed = ShooterConstants.kShooterSpeakerSpeed; // * Constants.VortexMotorConstants.kFreeSpeedRpm;
+    private double m_passSpeed = ShooterConstants.kShooterPassSpeed; // * Constants.VortexMotorConstants.kFreeSpeedRpm;
 
     // The container for the robot. Contains subsystems, OI devices, and commands.
     public RobotContainer() {
@@ -105,12 +111,21 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true, true, true)))
+                    true, true, true, false)))
                     .until(m_shooter::getInvNoteSensor)
-                    .withTimeout(.75)
+                    .withTimeout(1.25)
             .andThen(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")))
         );
-
+        NamedCommands.registerCommand("FindSpeaker",
+            (new RunCommand(
+                () -> m_robotDrive.drive(
+                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                    true, true, false, true)))
+                    .until(m_shooter::tagged)
+                    .withTimeout(5)
+        );
         // Add commend to target in on thd april tag 
         /* 
         NamedCommands.registerCommand("TargetAmp", 
@@ -131,6 +146,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("shooter/Shooter Amp Speed", m_ampSpeed);
         SmartDashboard.putNumber("shooter/Shooter Speaker Speed", m_speakerSpeed);
         SmartDashboard.putNumber("shooter/Shooter Pass Speed", m_passSpeed);
+        m_led.setColors(Color.kBlue, Color.kGreen); //Carrboro colors = 
 
         configureButtonBindings();
          
@@ -140,7 +156,7 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true, true, rightStick.getAsBoolean()),
+                    true, true, rightStick.getAsBoolean(), leftStick.getAsBoolean()),
                 m_robotDrive)
         );
     }
@@ -203,15 +219,21 @@ public class RobotContainer {
 
     // Commands used for buttons and auto
 
+
+
     private Command shootAmp() {
         return (new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Amp Speed", m_ampSpeed)))
-            .andThen(new WaitCommand(1.5)).until(m_shooter::isShooterReady)
+            .andThen(new WaitCommand(1))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeAmpSpeed))
+            .andThen(new InstantCommand(() -> m_led.setRGB(255, 255, 255)))
+            .andThen(new InstantCommand(() -> m_led.startBlinking()))
             .until(m_shooter::getInvshootSensor).withTimeout(1))
             .andThen(new WaitCommand(0.185))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToAmp()))
             .andThen(new WaitCommand(.25))
             .andThen(new InstantCommand(() -> m_shooter.shooterOFF()))
+            .andThen(new InstantCommand(()-> m_led.stopBlinking()))
+            .andThen(new InstantCommand(() -> m_led.setColors(Color.kBlue, Color.kGreen)))
             .andThen(new InstantCommand(() -> m_arm.rotateArmToBot()))
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))));
     }   
@@ -231,9 +253,14 @@ public class RobotContainer {
     private Command noteSensed(){
         return (new InstantCommand(() -> m_shooter.intakeOFF())
             .alongWith(Commands.runOnce(() -> m_driverController.setRumble(RumbleType.kBothRumble, 2)))
+            .alongWith(new InstantCommand(() -> m_led.setRGB(229, 30, 0)))
+            .alongWith(new InstantCommand (() -> m_led.startBlinking()))
             .andThen(new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Speaker Speed", m_speakerSpeed))))
             .andThen(new WaitCommand(0.5))
             .andThen(Commands.runOnce(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)))
+            .andThen(new WaitCommand(1.5))
+            .andThen(new InstantCommand(() -> m_led.stopBlinking()))
+            .andThen(new InstantCommand(() -> m_led.setRGB(229, 30, 0)))
         );
     }
 
@@ -242,9 +269,14 @@ public class RobotContainer {
         new InstantCommand(() -> m_shooter.shooterON(SmartDashboard.getNumber("shooter/Shooter Speaker Speed", m_speakerSpeed)))
             .until(m_shooter::isShooterReady).withTimeout(0.5)
             .andThen(new InstantCommand(() -> m_shooter.intakeON(ShooterConstants.kIntakeSpeakerSpeed))),
-        new WaitUntilCommand(() -> !m_shooter.shootSensor.get()).withTimeout(1),
-        new WaitCommand(0.1), 
-            new InstantCommand(() -> m_shooter.shooterOFF()));
+        new InstantCommand(() -> m_led.setRGB(255, 255, 255)),
+        new InstantCommand(() -> m_led.startBlinking()),
+        new WaitUntilCommand(() -> !m_shooter.shootSensor.get()).withTimeout(3),
+        new WaitCommand(0.2), 
+        new InstantCommand(() -> m_shooter.shooterOFF()),
+        new InstantCommand(()-> m_led.stopBlinking()),
+        new InstantCommand(() -> m_led.setColors(Color.kBlue, Color.kGreen)));
+
     }
     /* 
     private Command targetAmp() {
@@ -272,7 +304,7 @@ public class RobotContainer {
             if (m_vision.targetID(target) >= 4 && m_vision.targetID(target) <= 7){ 
                 double targetAngularVel = m_vision.getYaw(target) * kP;
                 targetAngularVel *= -1;
-                SmartDashboard.putNumber("Camera Angular Vel", targetAngularVel);
+            SmartDashboard.putNumber("Camera Angular Vel", targetAngularVel);
                 return targetAngularVel;
             }
 
